@@ -43,7 +43,6 @@ function SearchButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("[SearchButton] clicked");
         onClick?.();
       }}
       style={{ cursor: "pointer", WebkitTapHighlightColor: "transparent", pointerEvents: "auto" }}

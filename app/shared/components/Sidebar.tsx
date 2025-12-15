@@ -27,9 +27,6 @@ function TenantSwitcher({
   onNavigate?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Debug logging
-  console.log("[TenantSwitcher] isOpen:", isOpen);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -70,10 +67,6 @@ function TenantSwitcher({
     navigate(`/${hospitalId}`);
     onNavigate?.();
   };
-
-  if (isOpen) {
-    console.log("[TenantSwitcher] Rendering popover, style:", popoverStyle);
-  }
 
   const popoverContent = isOpen ? (
     <div
@@ -180,7 +173,6 @@ function TenantSwitcher({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log("[TenantSwitcher] button clicked, current isOpen:", isOpen);
           setIsOpen(!isOpen);
         }}
         style={{ cursor: "pointer", WebkitTapHighlightColor: "transparent", pointerEvents: "auto" }}
@@ -348,7 +340,7 @@ export function Sidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="bg-midnight/50 lg:hidden"
+          className="bg-midnight/60 lg:hidden animate-in fade-in duration-200"
           style={{
             position: "fixed",
             top: 0,
@@ -356,6 +348,8 @@ export function Sidebar({
             right: 0,
             bottom: 0,
             zIndex: 40,
+            WebkitBackdropFilter: "blur(4px)",
+            backdropFilter: "blur(4px)",
           }}
           onClick={onClose}
           aria-hidden="true"

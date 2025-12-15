@@ -338,12 +338,7 @@ export function SearchDialog({
     };
   }, [open]);
 
-  // Debug logging
-  console.log("[SearchDialog] open:", open);
-
   if (!open) return null;
-
-  console.log("[SearchDialog] Rendering portal content");
 
   // Calculate start indices for each category
   let currentStartIndex = 0;
@@ -362,7 +357,7 @@ export function SearchDialog({
 
   return createPortal(
     <div
-      className="flex items-start justify-center pt-[15vh]"
+      className="flex items-end sm:items-start justify-center sm:pt-[15vh]"
       style={{
         position: "fixed",
         top: 0,
@@ -389,13 +384,18 @@ export function SearchDialog({
         aria-hidden="true"
       />
 
-      {/* Dialog */}
+      {/* Dialog - drawer on mobile, modal on desktop */}
       <div
-        className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden"
+        className="relative w-full sm:max-w-2xl bg-white shadow-2xl overflow-hidden rounded-t-2xl sm:rounded-xl animate-in fade-in dialog-panel duration-200"
         role="dialog"
         aria-modal="true"
         style={{ position: "relative", zIndex: 1 }}
       >
+        {/* Drag handle - visible only on mobile */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
+
         <SearchInput
           value={query}
           onChange={setQuery}
@@ -406,7 +406,7 @@ export function SearchDialog({
 
         <FilterBar filters={filters} />
 
-        <div className="max-h-[50vh] overflow-y-auto">
+        <div className="max-h-[50vh] sm:max-h-[50vh] overflow-y-auto">
           {isLoading ? (
             <LoadingState />
           ) : displayCategories.length > 0 ? (

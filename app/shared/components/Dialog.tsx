@@ -122,7 +122,7 @@ function DialogRoot({
   return createPortal(
     <DialogContext.Provider value={{ onClose }}>
       <div
-        className="flex items-center justify-center p-4"
+        className="flex items-end sm:items-center justify-center sm:p-4"
         role="dialog"
         aria-modal="true"
         style={{
@@ -151,17 +151,23 @@ function DialogRoot({
           aria-hidden="true"
         />
 
-        {/* Dialog panel */}
+        {/* Dialog panel - drawer on mobile, modal on sm+ */}
         <div
           ref={dialogRef}
           className={`
-            w-full ${sizeClasses[size]} bg-white rounded-xl shadow-xl
-            animate-in fade-in zoom-in-95 duration-200
-            max-h-[90vh] flex flex-col
+            w-full bg-white shadow-xl flex flex-col
+            max-h-[85vh] sm:max-h-[90vh]
+            rounded-t-2xl sm:rounded-xl
+            animate-in fade-in dialog-panel duration-200
+            sm:${sizeClasses[size]}
             ${className}
           `}
           style={{ position: "relative", zIndex: 1 }}
         >
+          {/* Drag handle - visible only on mobile */}
+          <div className="flex justify-center pt-3 pb-1 sm:hidden">
+            <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          </div>
           {children}
         </div>
       </div>
@@ -186,7 +192,7 @@ function DialogHeader({
 
   return (
     <div
-      className={`flex items-start justify-between gap-4 px-6 pt-6 pb-4 ${className}`}
+      className={`flex items-start justify-between gap-4 px-4 sm:px-6 pt-2 sm:pt-6 pb-4 ${className}`}
     >
       <div className="flex-1 min-w-0">{children}</div>
       {showClose && (
@@ -248,7 +254,7 @@ interface DialogBodyProps {
 
 function DialogBody({ children, className = "" }: DialogBodyProps) {
   return (
-    <div className={`flex-1 overflow-y-auto px-6 py-2 ${className}`}>
+    <div className={`flex-1 overflow-y-auto px-4 sm:px-6 py-2 ${className}`}>
       {children}
     </div>
   );
@@ -262,7 +268,7 @@ interface DialogFooterProps {
 function DialogFooter({ children, className = "" }: DialogFooterProps) {
   return (
     <div
-      className={`flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 ${className}`}
+      className={`flex items-center justify-end gap-3 px-4 sm:px-6 py-4 border-t border-gray-100 ${className}`}
     >
       {children}
     </div>

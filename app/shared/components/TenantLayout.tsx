@@ -157,8 +157,6 @@ export function TenantLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // Debug logging
-  console.log("[TenantLayout] searchOpen:", searchOpen, "sidebarOpen:", sidebarOpen);
   const filteredNavItems = filterNavItemsByPermissions(navItems, permissions);
 
   // Keyboard shortcut for search (Cmd+K / Ctrl+K)
