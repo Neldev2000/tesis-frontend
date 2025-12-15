@@ -2,7 +2,32 @@ interface HeaderProps {
   notificationCount?: number;
   onSearch?: (query: string) => void;
   onNotificationsClick?: () => void;
+  onMenuClick?: () => void;
   searchPlaceholder?: string;
+}
+
+function MenuButton({ onClick }: { onClick?: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="p-2 -ml-2 text-gray-500 hover:text-midnight hover:bg-gray-100 rounded-lg lg:hidden"
+      aria-label="Open menu"
+    >
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={1.5}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+  );
 }
 
 function SearchBar({
@@ -78,12 +103,16 @@ export function Header({
   notificationCount,
   onSearch,
   onNotificationsClick,
+  onMenuClick,
   searchPlaceholder,
 }: HeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-3">
-      <div className="flex items-center justify-between gap-4">
-        <SearchBar onSearch={onSearch} placeholder={searchPlaceholder} />
+    <header className="bg-white border-b border-gray-100 px-4 py-3 lg:px-6">
+      <div className="flex items-center justify-between gap-3 lg:gap-4">
+        <div className="flex items-center gap-3 flex-1">
+          <MenuButton onClick={onMenuClick} />
+          <SearchBar onSearch={onSearch} placeholder={searchPlaceholder} />
+        </div>
         <NotificationBell
           count={notificationCount}
           onClick={onNotificationsClick}

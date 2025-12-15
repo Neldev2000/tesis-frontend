@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import type { NavItem, UserProfile, Hospital } from "../types/navigation";
@@ -130,6 +130,7 @@ export function TenantLayout({
   onNotificationsClick,
   onProfileClick,
 }: TenantLayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const filteredNavItems = filterNavItemsByPermissions(navItems, permissions);
 
   return (
@@ -140,18 +141,22 @@ export function TenantLayout({
         tenantId={tenantId}
         tenantName={tenantName}
         hospitals={hospitals}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         onSettingsClick={onSettingsClick}
         onProfileClick={onProfileClick}
       />
 
-      <div className="ml-60 flex flex-col min-h-screen">
+      {/* Main content - responsive margin */}
+      <div className="lg:ml-64 flex flex-col min-h-screen">
         <Header
           notificationCount={notificationCount}
           onSearch={onSearch}
           onNotificationsClick={onNotificationsClick}
+          onMenuClick={() => setSidebarOpen(true)}
         />
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>
     </div>
   );

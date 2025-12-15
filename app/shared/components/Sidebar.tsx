@@ -8,6 +8,8 @@ interface SidebarProps {
   tenantId: string;
   tenantName?: string;
   hospitals?: Hospital[];
+  isOpen?: boolean;
+  onClose?: () => void;
   onSettingsClick?: () => void;
   onProfileClick?: () => void;
 }
@@ -16,10 +18,12 @@ function TenantSwitcher({
   currentTenantId,
   currentTenantName,
   hospitals,
+  onNavigate,
 }: {
   currentTenantId: string;
   currentTenantName: string;
   hospitals: Hospital[];
+  onNavigate?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -41,13 +45,14 @@ function TenantSwitcher({
   const handleSwitch = (hospitalId: string) => {
     setIsOpen(false);
     navigate(`/${hospitalId}`);
+    onNavigate?.();
   };
 
   return (
     <div className="relative" ref={popoverRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 w-full px-3 py-3 hover:bg-gray-50 rounded-lg transition-colors"
+        className="flex items-center gap-2 w-full px-2 py-2 hover:bg-gray-50 rounded-lg transition-colors"
       >
         <div className="w-8 h-8 rounded-lg bg-viking-500 flex items-center justify-center flex-shrink-0">
           <svg
@@ -146,6 +151,7 @@ function TenantSwitcher({
           <div className="border-t border-gray-100 p-2">
             <NavLink
               to="/hospitals"
+              onClick={onNavigate}
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-viking-600 hover:bg-gray-50 rounded-md transition-colors"
             >
               <svg
@@ -170,13 +176,22 @@ function TenantSwitcher({
   );
 }
 
-function NavItemLink({ item, tenantId }: { item: NavItem; tenantId: string }) {
+function NavItemLink({
+  item,
+  tenantId,
+  onClick,
+}: {
+  item: NavItem;
+  tenantId: string;
+  onClick?: () => void;
+}) {
   const href = item.href === "" ? `/${tenantId}` : `/${tenantId}/${item.href}`;
 
   return (
     <NavLink
       to={href}
       end={item.href === ""}
+      onClick={onClick}
       className={({ isActive }) =>
         `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
           isActive
@@ -264,34 +279,89 @@ export function Sidebar({
   tenantId,
   tenantName,
   hospitals = [],
+  isOpen = false,
+  onClose,
   onSettingsClick,
   onProfileClick,
 }: SidebarProps) {
+  // Close sidebar when navigating on mobile
+  const handleNavClick = () => {
+    if (window.innerWidth < 1024) {
+      onClose?.();
+    }
+  };
+
   return (
-    <aside className="w-60 bg-white border-r border-gray-100 flex flex-col h-screen fixed left-0 top-0">
-      <div className="p-2 border-b border-gray-100">
-        <TenantSwitcher
-          currentTenantId={tenantId}
-          currentTenantName={tenantName ?? tenantId}
-          hospitals={hospitals}
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-midnight/50 z-40 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
         />
-      </div>
+      )}
 
-      <nav className="flex-1 p-2 overflow-y-auto">
-        <ul className="space-y-0.5">
-          {navItems.map((item) => (
-            <li key={item.id}>
-              <NavItemLink item={item} tenantId={tenantId} />
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed left-0 top-0 z-50 h-screen w-64 bg-white border-r border-gray-100
+          flex flex-col transition-transform duration-300 ease-in-out
+          lg:translate-x-0 lg:z-30
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <div className="flex items-center gap-1 p-2 border-b border-gray-100">
+          <div className="flex-1 min-w-0">
+            <TenantSwitcher
+              currentTenantId={tenantId}
+              currentTenantName={tenantName ?? tenantId}
+              hospitals={hospitals}
+              onNavigate={handleNavClick}
+            />
+          </div>
+          {/* Mobile close button */}
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-midnight hover:bg-gray-100 rounded-lg lg:hidden flex-shrink-0"
+            aria-label="Close menu"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18 18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
 
-      <UserSection
-        user={user}
-        onSettingsClick={onSettingsClick}
-        onProfileClick={onProfileClick}
-      />
-    </aside>
+        <nav className="flex-1 p-2 overflow-y-auto">
+          <ul className="space-y-0.5">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <NavItemLink
+                  item={item}
+                  tenantId={tenantId}
+                  onClick={handleNavClick}
+                />
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <UserSection
+          user={user}
+          onSettingsClick={onSettingsClick}
+          onProfileClick={onProfileClick}
+        />
+      </aside>
+    </>
   );
 }
