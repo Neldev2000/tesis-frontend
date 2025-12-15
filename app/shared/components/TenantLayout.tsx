@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { SearchDialog } from "./SearchDialog";
 import type { NavItem, UserProfile, Hospital } from "../types/navigation";
 
 // Default navigation icons
@@ -83,6 +84,19 @@ export const defaultNavItems: NavItem[] = [
   },
 ];
 
+interface SearchResult {
+  id: string;
+  title: string;
+  subtitle?: string;
+  tag?: string;
+  href?: string;
+}
+
+interface SearchCategory {
+  label: string;
+  results: SearchResult[];
+}
+
 interface TenantLayoutProps {
   children: ReactNode;
   tenantId: string;
@@ -95,7 +109,14 @@ interface TenantLayoutProps {
   /** User permissions for RBAC filtering */
   permissions?: string[];
   notificationCount?: number;
+  /** Search results categories */
+  searchCategories?: SearchCategory[];
+  /** Recent searches for empty state */
+  recentSearches?: SearchResult[];
+  /** Called when search query changes */
   onSearch?: (query: string) => void;
+  /** Called when a search result is selected */
+  onSearchSelect?: (result: SearchResult) => void;
   onSettingsClick?: () => void;
   onNotificationsClick?: () => void;
   onProfileClick?: () => void;
@@ -125,13 +146,30 @@ export function TenantLayout({
   navItems = defaultNavItems,
   permissions,
   notificationCount,
+  searchCategories = [],
+  recentSearches = [],
   onSearch,
+  onSearchSelect,
   onSettingsClick,
   onNotificationsClick,
   onProfileClick,
 }: TenantLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const filteredNavItems = filterNavItemsByPermissions(navItems, permissions);
+
+  // Keyboard shortcut for search (Cmd+K / Ctrl+K)
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      setSearchOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <div className="min-h-screen bg-snow">
@@ -151,13 +189,23 @@ export function TenantLayout({
       <div className="lg:ml-64 flex flex-col min-h-screen">
         <Header
           notificationCount={notificationCount}
-          onSearch={onSearch}
+          onSearchClick={() => setSearchOpen(true)}
           onNotificationsClick={onNotificationsClick}
           onMenuClick={() => setSidebarOpen(true)}
         />
 
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </div>
+
+      {/* Search Dialog */}
+      <SearchDialog
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onSearch={onSearch}
+        onSelect={onSearchSelect}
+        categories={searchCategories}
+        recentSearches={recentSearches}
+      />
     </div>
   );
 }

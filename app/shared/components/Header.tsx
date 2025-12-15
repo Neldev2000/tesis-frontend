@@ -1,6 +1,6 @@
 interface HeaderProps {
   notificationCount?: number;
-  onSearch?: (query: string) => void;
+  onSearchClick?: () => void;
   onNotificationsClick?: () => void;
   onMenuClick?: () => void;
   searchPlaceholder?: string;
@@ -30,37 +30,36 @@ function MenuButton({ onClick }: { onClick?: () => void }) {
   );
 }
 
-function SearchBar({
-  onSearch,
+function SearchButton({
+  onClick,
   placeholder = "Search patients, doctors, or records...",
 }: {
-  onSearch?: (query: string) => void;
+  onClick?: () => void;
   placeholder?: string;
 }) {
   return (
-    <div className="relative flex-1 max-w-lg">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg
-          className="h-5 w-5 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1.5}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-          />
-        </svg>
-      </div>
-      <input
-        type="text"
-        placeholder={placeholder}
-        onChange={(e) => onSearch?.(e.target.value)}
-        className="block w-full pl-10 pr-4 py-2 text-sm text-midnight bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-viking-500/20 focus:border-viking-500 transition-colors placeholder:text-gray-400"
-      />
-    </div>
+    <button
+      onClick={onClick}
+      className="flex items-center gap-3 flex-1 max-w-lg px-3 py-2 text-sm text-gray-400 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100/50 transition-colors text-left"
+    >
+      <svg
+        className="h-5 w-5 flex-shrink-0"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={1.5}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+        />
+      </svg>
+      <span className="flex-1 truncate">{placeholder}</span>
+      <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-gray-400 bg-white border border-gray-200 rounded">
+        <span className="text-[10px]">⌘</span>K
+      </kbd>
+    </button>
   );
 }
 
@@ -101,7 +100,7 @@ function NotificationBell({
 
 export function Header({
   notificationCount,
-  onSearch,
+  onSearchClick,
   onNotificationsClick,
   onMenuClick,
   searchPlaceholder,
@@ -111,7 +110,7 @@ export function Header({
       <div className="flex items-center justify-between gap-3 lg:gap-4">
         <div className="flex items-center gap-3 flex-1">
           <MenuButton onClick={onMenuClick} />
-          <SearchBar onSearch={onSearch} placeholder={searchPlaceholder} />
+          <SearchButton onClick={onSearchClick} placeholder={searchPlaceholder} />
         </div>
         <NotificationBell
           count={notificationCount}

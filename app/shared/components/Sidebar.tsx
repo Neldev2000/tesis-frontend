@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { NavLink, useNavigate } from "react-router";
 import type { NavItem, UserProfile, Hospital } from "../types/navigation";
 
@@ -26,14 +27,33 @@ function TenantSwitcher({
   onNavigate?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+
+  // Update popover position when open
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPopoverStyle({
+        position: "fixed",
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
       if (
         popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node)
+        !popoverRef.current.contains(target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
@@ -48,9 +68,101 @@ function TenantSwitcher({
     onNavigate?.();
   };
 
+  const popoverContent = isOpen ? (
+    <div
+      ref={popoverRef}
+      style={popoverStyle}
+      className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+    >
+      <div className="py-1">
+        {hospitals.map((hospital) => (
+          <button
+            key={hospital.id}
+            onClick={() => handleSwitch(hospital.id)}
+            className={`flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors ${
+              hospital.id === currentTenantId ? "bg-viking-50" : ""
+            }`}
+          >
+            <div
+              className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
+                hospital.id === currentTenantId
+                  ? "bg-viking-500"
+                  : "bg-gray-200"
+              }`}
+            >
+              <svg
+                className={`w-3.5 h-3.5 ${hospital.id === currentTenantId ? "text-white" : "text-gray-500"}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z"
+                />
+              </svg>
+            </div>
+            <span
+              className={`text-sm truncate ${
+                hospital.id === currentTenantId
+                  ? "font-medium text-viking-700"
+                  : "text-gray-700"
+              }`}
+            >
+              {hospital.name}
+            </span>
+            {hospital.id === currentTenantId && (
+              <svg
+                className="w-4 h-4 text-viking-500 ml-auto"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m4.5 12.75 6 6 9-13.5"
+                />
+              </svg>
+            )}
+          </button>
+        ))}
+      </div>
+      <div className="border-t border-gray-100 p-2">
+        <NavLink
+          to="/hospitals"
+          onClick={() => {
+            setIsOpen(false);
+            onNavigate?.();
+          }}
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-viking-600 hover:bg-gray-50 rounded-md transition-colors"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
+          </svg>
+          View all hospitals
+        </NavLink>
+      </div>
+    </div>
+  ) : null;
+
   return (
-    <div className="relative" ref={popoverRef}>
+    <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 w-full px-2 py-2 hover:bg-gray-50 rounded-lg transition-colors"
       >
@@ -89,89 +201,7 @@ function TenantSwitcher({
         </svg>
       </button>
 
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1 mx-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-          <div className="py-1">
-            {hospitals.map((hospital) => (
-              <button
-                key={hospital.id}
-                onClick={() => handleSwitch(hospital.id)}
-                className={`flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors ${
-                  hospital.id === currentTenantId ? "bg-viking-50" : ""
-                }`}
-              >
-                <div
-                  className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
-                    hospital.id === currentTenantId
-                      ? "bg-viking-500"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  <svg
-                    className={`w-3.5 h-3.5 ${hospital.id === currentTenantId ? "text-white" : "text-gray-500"}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z"
-                    />
-                  </svg>
-                </div>
-                <span
-                  className={`text-sm truncate ${
-                    hospital.id === currentTenantId
-                      ? "font-medium text-viking-700"
-                      : "text-gray-700"
-                  }`}
-                >
-                  {hospital.name}
-                </span>
-                {hospital.id === currentTenantId && (
-                  <svg
-                    className="w-4 h-4 text-viking-500 ml-auto"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m4.5 12.75 6 6 9-13.5"
-                    />
-                  </svg>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className="border-t border-gray-100 p-2">
-            <NavLink
-              to="/hospitals"
-              onClick={onNavigate}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-viking-600 hover:bg-gray-50 rounded-md transition-colors"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              View all hospitals
-            </NavLink>
-          </div>
-        </div>
-      )}
+      {popoverContent && createPortal(popoverContent, document.body)}
     </div>
   );
 }
