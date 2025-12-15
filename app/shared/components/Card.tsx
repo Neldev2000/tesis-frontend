@@ -160,18 +160,18 @@ export function StatCard({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {icon && (
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconColorStyles[iconColor]}`}
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColorStyles[iconColor]}`}
               >
-                <span className="w-4 h-4">{icon}</span>
+                <span className="w-5 h-5 [&>svg]:w-5 [&>svg]:h-5">{icon}</span>
               </div>
             )}
-            <span className="text-sm text-gray-500">{title}</span>
+            <span className="text-sm text-gray-500 font-medium">{title}</span>
           </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-midnight">{value}</span>
+          <div className="mt-3 flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-midnight">{value}</span>
             {trend && (
               <span
                 className={`text-sm font-medium ${trendColorStyles[trend.direction]}`}
@@ -183,11 +183,11 @@ export function StatCard({
             )}
           </div>
           {subtitle && (
-            <span className="text-xs text-gray-500 mt-1">{subtitle}</span>
+            <span className="block text-sm text-gray-500 mt-1">{subtitle}</span>
           )}
         </div>
-        {/* Optional secondary icon on the right */}
-        <div className="w-8 h-8 text-gray-200">
+        {/* Decorative grid icon */}
+        <div className="w-10 h-10 text-gray-100 flex-shrink-0">
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
             <path
               strokeLinecap="round"
