@@ -4,8 +4,9 @@ export default [
   // Public routes
   index("routes/home.tsx"),
   route("login", "routes/auth/login.tsx"),
-  
-  // Hospital selection route  
+  route("components", "routes/components.tsx"),
+
+  // Hospital selection route
   route("hospitals", "routes/hospitals/index.tsx"),
   
   // Tenant-specific routes with layout

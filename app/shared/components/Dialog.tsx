@@ -192,7 +192,7 @@ function DialogHeader({
 
   return (
     <div
-      className={`flex items-start justify-between gap-4 px-4 sm:px-6 pt-2 sm:pt-6 pb-4 ${className}`}
+      className={`flex-shrink-0 flex items-start justify-between gap-4 px-4 sm:px-6 pt-2 sm:pt-6 pb-4 ${className}`}
     >
       <div className="flex-1 min-w-0">{children}</div>
       {showClose && (
@@ -254,7 +254,7 @@ interface DialogBodyProps {
 
 function DialogBody({ children, className = "" }: DialogBodyProps) {
   return (
-    <div className={`flex-1 overflow-y-auto px-4 sm:px-6 py-2 ${className}`}>
+    <div className={`flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-2 custom-scrollbar ${className}`}>
       {children}
     </div>
   );
@@ -268,7 +268,7 @@ interface DialogFooterProps {
 function DialogFooter({ children, className = "" }: DialogFooterProps) {
   return (
     <div
-      className={`flex items-center justify-end gap-3 px-4 sm:px-6 py-4 border-t border-gray-100 ${className}`}
+      className={`flex-shrink-0 flex items-center justify-end gap-3 px-4 sm:px-6 py-4 border-t border-gray-100 ${className}`}
     >
       {children}
     </div>

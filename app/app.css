@@ -186,3 +186,81 @@ body {
     animation-name: zoom-in-95;
   }
 }
+
+/* Step transition animations */
+@-webkit-keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(1rem);
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-from-right-4 {
+  -webkit-animation-name: slide-in-from-right;
+  animation-name: slide-in-from-right;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-viking-300) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-viking-300);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-viking-400);
+}
+
+/* Subtle scrollbar variant */
+.custom-scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+}
+
+.custom-scrollbar-subtle::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar-subtle::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar-subtle::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2.5px;
+}
+
+.custom-scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
