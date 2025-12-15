@@ -1,2 +1,6 @@
-// Export shared types here
-// Example: export type { User } from './auth';
+export type {
+  NavItem,
+  UserProfile,
+  Hospital,
+  NavigationConfig,
+} from "./navigation";

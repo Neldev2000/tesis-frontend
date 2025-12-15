@@ -1,24 +1,49 @@
 import { Outlet, useParams } from "react-router";
+import { TenantLayout } from "~/shared/components";
+import type { UserProfile, Hospital } from "~/shared/types";
 
-export default function TenantLayout() {
+// TODO: Replace with actual user data from auth store
+const mockUser: UserProfile = {
+  id: "1",
+  name: "Dr. Smith",
+  role: "Cardiology",
+  initials: "DS",
+};
+
+// TODO: Replace with actual hospitals from API
+const mockHospitals: Hospital[] = [
+  { id: "general-hospital", name: "General Hospital" },
+  { id: "central-medical", name: "Central Medical Center" },
+  { id: "st-mary", name: "St. Mary's Hospital" },
+];
+
+// TODO: Replace with actual permissions from auth/RBAC system
+const mockPermissions = [
+  "appointments:read",
+  "patients:read",
+  "inventory:read",
+];
+
+export default function TenantLayoutRoute() {
   const { tenantId } = useParams();
 
+  if (!tenantId) {
+    return null;
+  }
+
+  const currentHospital = mockHospitals.find((h) => h.id === tenantId);
+  const tenantName = currentHospital?.name ?? tenantId;
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                {tenantId} Hospital
-              </h1>
-            </div>
-          </div>
-        </div>
-      </nav>
-      <main>
-        <Outlet />
-      </main>
-    </div>
+    <TenantLayout
+      tenantId={tenantId}
+      tenantName={tenantName}
+      user={mockUser}
+      hospitals={mockHospitals}
+      permissions={mockPermissions}
+      notificationCount={3}
+    >
+      <Outlet />
+    </TenantLayout>
   );
 }

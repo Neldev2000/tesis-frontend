@@ -3,11 +3,30 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Custom color palette */
+  --color-viking-50: #effbfc;
+  --color-viking-100: #d7f4f6;
+  --color-viking-200: #b3e8ee;
+  --color-viking-300: #73d2de;
+  --color-viking-400: #44bbcc;
+  --color-viking-500: #289fb2;
+  --color-viking-600: #248096;
+  --color-viking-700: #23687b;
+  --color-viking-800: #255665;
+  --color-viking-900: #234856;
+  --color-viking-950: #122f3a;
+
+  /* Custom white */
+  --color-snow: #FBFFFE;
+
+  /* Custom dark */
+  --color-midnight: #0D1B2A;
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-snow text-midnight dark:bg-midnight dark:text-snow;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
