@@ -122,13 +122,31 @@ function DialogRoot({
   return createPortal(
     <DialogContext.Provider value={{ onClose }}>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          isolation: "isolate",
+        }}
       >
         {/* Backdrop */}
         <div
-          className="fixed inset-0 bg-midnight/60 backdrop-blur-sm animate-in fade-in duration-200"
+          className="bg-midnight/60 animate-in fade-in duration-200"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            WebkitBackdropFilter: "blur(4px)",
+            backdropFilter: "blur(4px)",
+          }}
           onClick={handleBackdropClick}
           aria-hidden="true"
         />
@@ -137,11 +155,12 @@ function DialogRoot({
         <div
           ref={dialogRef}
           className={`
-            relative w-full ${sizeClasses[size]} bg-white rounded-xl shadow-xl
+            w-full ${sizeClasses[size]} bg-white rounded-xl shadow-xl
             animate-in fade-in zoom-in-95 duration-200
             max-h-[90vh] flex flex-col
             ${className}
           `}
+          style={{ position: "relative", zIndex: 1 }}
         >
           {children}
         </div>

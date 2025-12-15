@@ -338,7 +338,12 @@ export function SearchDialog({
     };
   }, [open]);
 
+  // Debug logging
+  console.log("[SearchDialog] open:", open);
+
   if (!open) return null;
+
+  console.log("[SearchDialog] Rendering portal content");
 
   // Calculate start indices for each category
   let currentStartIndex = 0;
@@ -356,10 +361,30 @@ export function SearchDialog({
       : [];
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh]">
+    <div
+      className="flex items-start justify-center pt-[15vh]"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        isolation: "isolate",
+      }}
+    >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-midnight/60 backdrop-blur-sm animate-in fade-in duration-200"
+        className="bg-midnight/60 animate-in fade-in duration-200"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          WebkitBackdropFilter: "blur(4px)",
+          backdropFilter: "blur(4px)",
+        }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -369,6 +394,7 @@ export function SearchDialog({
         className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl animate-in fade-in zoom-in-95 duration-200 overflow-hidden"
         role="dialog"
         aria-modal="true"
+        style={{ position: "relative", zIndex: 1 }}
       >
         <SearchInput
           value={query}

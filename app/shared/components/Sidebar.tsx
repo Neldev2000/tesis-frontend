@@ -27,6 +27,9 @@ function TenantSwitcher({
   onNavigate?: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Debug logging
+  console.log("[TenantSwitcher] isOpen:", isOpen);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -68,10 +71,20 @@ function TenantSwitcher({
     onNavigate?.();
   };
 
+  if (isOpen) {
+    console.log("[TenantSwitcher] Rendering popover, style:", popoverStyle);
+  }
+
   const popoverContent = isOpen ? (
     <div
       ref={popoverRef}
-      style={popoverStyle}
+      style={{
+        position: "fixed",
+        top: popoverStyle.top,
+        left: popoverStyle.left,
+        width: popoverStyle.width,
+        zIndex: 99999,
+      }}
       className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
     >
       <div className="py-1">
@@ -162,13 +175,21 @@ function TenantSwitcher({
   return (
     <div className="relative">
       <button
+        type="button"
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("[TenantSwitcher] button clicked, current isOpen:", isOpen);
+          setIsOpen(!isOpen);
+        }}
+        style={{ cursor: "pointer", WebkitTapHighlightColor: "transparent", pointerEvents: "auto" }}
         className="flex items-center gap-2 w-full px-2 py-2 hover:bg-gray-50 rounded-lg transition-colors"
       >
-        <div className="w-8 h-8 rounded-lg bg-viking-500 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-viking-500 flex items-center justify-center flex-shrink-0" style={{ pointerEvents: "none" }}>
           <svg
             className="w-4 h-4 text-white"
+            style={{ pointerEvents: "none" }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -181,13 +202,14 @@ function TenantSwitcher({
             />
           </svg>
         </div>
-        <div className="flex-1 min-w-0 text-left">
+        <div className="flex-1 min-w-0 text-left" style={{ pointerEvents: "none" }}>
           <p className="text-sm font-semibold text-midnight truncate">
             {currentTenantName}
           </p>
         </div>
         <svg
           className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+          style={{ pointerEvents: "none" }}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -326,7 +348,15 @@ export function Sidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-midnight/50 z-40 lg:hidden"
+          className="bg-midnight/50 lg:hidden"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 40,
+          }}
           onClick={onClose}
           aria-hidden="true"
         />
@@ -337,8 +367,8 @@ export function Sidebar({
         className={`
           fixed left-0 top-0 z-50 h-screen w-64 bg-white border-r border-gray-100
           flex flex-col transition-transform duration-300 ease-in-out
-          lg:translate-x-0 lg:z-30
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:z-30
+          ${isOpen ? "sidebar-transform-visible" : "sidebar-transform-hidden"}
         `}
       >
         <div className="flex items-center gap-1 p-2 border-b border-gray-100">

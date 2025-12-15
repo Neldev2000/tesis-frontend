@@ -39,6 +39,45 @@ body {
   backdrop-filter: blur(4px);
 }
 
+/* Portal/Modal container - fixes Safari stacking context issues */
+.portal-container {
+  isolation: isolate;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Safari-safe fixed positioning */
+.safe-fixed {
+  position: fixed;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Safari-safe sidebar transforms */
+.sidebar-transform-hidden {
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.sidebar-transform-visible {
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+@media (min-width: 1024px) {
+  .sidebar-transform-hidden,
+  .sidebar-transform-visible {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
 /* Dialog animations */
 @-webkit-keyframes fade-in {
   from {

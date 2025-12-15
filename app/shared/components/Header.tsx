@@ -39,11 +39,19 @@ function SearchButton({
 }) {
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("[SearchButton] clicked");
+        onClick?.();
+      }}
+      style={{ cursor: "pointer", WebkitTapHighlightColor: "transparent", pointerEvents: "auto" }}
       className="flex items-center gap-3 flex-1 max-w-lg px-3 py-2 text-sm text-gray-400 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100/50 transition-colors text-left"
     >
       <svg
         className="h-5 w-5 flex-shrink-0"
+        style={{ pointerEvents: "none" }}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -55,8 +63,8 @@ function SearchButton({
           d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
         />
       </svg>
-      <span className="flex-1 truncate">{placeholder}</span>
-      <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-gray-400 bg-white border border-gray-200 rounded">
+      <span className="flex-1 truncate" style={{ pointerEvents: "none" }}>{placeholder}</span>
+      <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-xs text-gray-400 bg-white border border-gray-200 rounded" style={{ pointerEvents: "none" }}>
         <span className="text-[10px]">⌘</span>K
       </kbd>
     </button>
