@@ -17,9 +17,30 @@ import {
   StockProgress,
   CircularProgress,
   Table,
+  // Basic inputs
   Input,
   SearchInput,
   Textarea,
+  NumberInput,
+  CurrencyInput,
+  PhoneInput,
+  EmailInput,
+  PasswordInput,
+  DateInput,
+  TimeInput,
+  Checkbox,
+  RadioGroup,
+  Switch,
+  // Select components
+  Select,
+  Combobox,
+  MultiSelect,
+  Autocomplete,
+  // File uploads
+  FileUpload,
+  ImageUpload,
+  AvatarUpload,
+  // Other
   EmptyState,
   NoResultsState,
   NoDataState,
@@ -28,6 +49,7 @@ import {
   MultiStepDialog,
   Stepper,
   type Step,
+  type SelectOption,
 } from "~/shared/components";
 
 function Section({
@@ -78,6 +100,67 @@ export default function ComponentsShowcase() {
   const [multiStepOpen, setMultiStepOpen] = useState(false);
   const [stepperDemo, setStepperDemo] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Specialized inputs state
+  const [numberValue, setNumberValue] = useState<number | undefined>(42);
+  const [currencyValue, setCurrencyValue] = useState<number | undefined>(1250.50);
+  const [phoneValue, setPhoneValue] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [dateValue, setDateValue] = useState("");
+  const [timeValue, setTimeValue] = useState("");
+
+  // Form controls state
+  const [checkboxValue, setCheckboxValue] = useState(false);
+  const [radioValue, setRadioValue] = useState("option1");
+  const [switchValue, setSwitchValue] = useState(false);
+
+  // Select state
+  const [selectValue, setSelectValue] = useState("");
+  const [comboboxValue, setComboboxValue] = useState("");
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
+  const [autocompleteValue, setAutocompleteValue] = useState("");
+
+  // File upload state
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [avatarFile, setAvatarFile] = useState<File | undefined>(undefined);
+
+  // Demo options for selects
+  const departmentOptions: SelectOption[] = [
+    { value: "cardiology", label: "Cardiology", description: "Heart & cardiovascular care" },
+    { value: "neurology", label: "Neurology", description: "Brain & nervous system" },
+    { value: "pediatrics", label: "Pediatrics", description: "Children's health" },
+    { value: "oncology", label: "Oncology", description: "Cancer treatment" },
+    { value: "orthopedics", label: "Orthopedics", description: "Bone & joint care" },
+    { value: "dermatology", label: "Dermatology", description: "Skin conditions" },
+  ];
+
+  const doctorOptions: SelectOption[] = [
+    { value: "dr-smith", label: "Dr. Sarah Smith" },
+    { value: "dr-johnson", label: "Dr. Michael Johnson" },
+    { value: "dr-williams", label: "Dr. Emily Williams" },
+    { value: "dr-brown", label: "Dr. James Brown" },
+    { value: "dr-davis", label: "Dr. Lisa Davis" },
+  ];
+
+  const conditionOptions: SelectOption[] = [
+    { value: "diabetes", label: "Diabetes" },
+    { value: "hypertension", label: "Hypertension" },
+    { value: "asthma", label: "Asthma" },
+    { value: "arthritis", label: "Arthritis" },
+    { value: "allergies", label: "Allergies" },
+    { value: "migraine", label: "Migraine" },
+  ];
+
+  const medicationOptions: SelectOption[] = [
+    { value: "aspirin", label: "Aspirin" },
+    { value: "ibuprofen", label: "Ibuprofen" },
+    { value: "acetaminophen", label: "Acetaminophen" },
+    { value: "metformin", label: "Metformin" },
+    { value: "lisinopril", label: "Lisinopril" },
+    { value: "omeprazole", label: "Omeprazole" },
+  ];
 
   return (
     <div className="min-h-screen bg-snow">
@@ -471,6 +554,274 @@ export default function ComponentsShowcase() {
                 label="Clinical Notes"
                 placeholder="Enter clinical observations..."
                 hint="Be as detailed as possible"
+              />
+            </div>
+          </SubSection>
+        </Section>
+
+        {/* Specialized Inputs */}
+        <Section title="Specialized Inputs">
+          <SubSection title="Number Input">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <NumberInput
+                label="Quantity"
+                value={numberValue}
+                onChange={setNumberValue}
+                min={0}
+                max={100}
+                step={1}
+              />
+              <NumberInput
+                label="Dosage (mg)"
+                value={numberValue}
+                onChange={setNumberValue}
+                min={0}
+                step={0.5}
+                hint="Enter dosage amount"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Currency Input">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <CurrencyInput
+                label="Invoice Amount"
+                value={currencyValue}
+                onChange={setCurrencyValue}
+                currency="USD"
+              />
+              <CurrencyInput
+                label="Insurance Claim"
+                value={currencyValue}
+                onChange={setCurrencyValue}
+                currency="EUR"
+                hint="Enter claim amount"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Phone & Email">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <PhoneInput
+                label="Phone Number"
+                value={phoneValue}
+                onChange={(value) => setPhoneValue(value)}
+                placeholder="+1 (555) 000-0000"
+              />
+              <EmailInput
+                label="Email Address"
+                value={emailValue}
+                onChange={(e) => setEmailValue(e.target.value)}
+                placeholder="patient@hospital.com"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Password Input">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <PasswordInput
+                label="Password"
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
+                placeholder="Enter password"
+              />
+              <PasswordInput
+                label="With Strength Indicator"
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
+                showStrength
+                placeholder="Enter strong password"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Date & Time">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <DateInput
+                label="Appointment Date"
+                value={dateValue}
+                onChange={(e) => setDateValue(e.target.value)}
+              />
+              <TimeInput
+                label="Appointment Time"
+                value={timeValue}
+                onChange={(e) => setTimeValue(e.target.value)}
+              />
+            </div>
+          </SubSection>
+        </Section>
+
+        {/* Form Controls */}
+        <Section title="Form Controls">
+          <SubSection title="Checkbox">
+            <div className="space-y-3 max-w-md">
+              <Checkbox
+                label="I agree to the terms and conditions"
+                checked={checkboxValue}
+                onChange={(e) => setCheckboxValue(e.target.checked)}
+              />
+              <Checkbox
+                label="Subscribe to newsletter"
+                description="Receive updates about hospital services"
+                checked={false}
+                onChange={() => {}}
+              />
+              <Checkbox
+                label="Disabled checkbox"
+                disabled
+                checked={true}
+                onChange={() => {}}
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Radio Group">
+            <div className="max-w-md">
+              <RadioGroup
+                label="Preferred Contact Method"
+                name="contact-method"
+                value={radioValue}
+                onChange={(value) => setRadioValue(value)}
+                options={[
+                  { value: "option1", label: "Phone Call" },
+                  { value: "option2", label: "Email" },
+                  { value: "option3", label: "SMS" },
+                ]}
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Switch">
+            <div className="space-y-4 max-w-md">
+              <Switch
+                label="Email Notifications"
+                checked={switchValue}
+                onChange={(e) => setSwitchValue(e.target.checked)}
+              />
+              <Switch
+                label="SMS Alerts"
+                description="Receive urgent alerts via text message"
+                checked={true}
+                onChange={() => {}}
+              />
+              <Switch
+                label="Disabled Switch"
+                disabled
+                checked={false}
+                onChange={() => {}}
+              />
+            </div>
+          </SubSection>
+        </Section>
+
+        {/* Select Components */}
+        <Section title="Select Components">
+          <SubSection title="Basic Select">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <Select
+                label="Department"
+                options={departmentOptions}
+                value={selectValue}
+                onChange={setSelectValue}
+                placeholder="Select department"
+              />
+              <Select
+                label="With Error"
+                options={departmentOptions}
+                value=""
+                onChange={() => {}}
+                placeholder="Select department"
+                error="This field is required"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Combobox (Searchable Select)">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+              <Combobox
+                label="Search Doctor"
+                options={doctorOptions}
+                value={comboboxValue}
+                onChange={(value) => setComboboxValue(value ?? "")}
+                placeholder="Type to search..."
+              />
+              <Combobox
+                label="Search Department"
+                options={departmentOptions}
+                value={comboboxValue}
+                onChange={(value) => setComboboxValue(value ?? "")}
+                placeholder="Type to search..."
+                hint="Start typing to filter options"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Multi Select">
+            <div className="max-w-md">
+              <MultiSelect
+                label="Medical Conditions"
+                options={conditionOptions}
+                value={multiSelectValue}
+                onChange={setMultiSelectValue}
+                placeholder="Select conditions..."
+                hint="You can select multiple conditions"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Autocomplete">
+            <div className="max-w-md">
+              <Autocomplete
+                label="Search Medications"
+                options={medicationOptions}
+                value={autocompleteValue}
+                onChange={setAutocompleteValue}
+                placeholder="Start typing medication name..."
+                hint="Type to search and select or enter custom value"
+              />
+            </div>
+          </SubSection>
+        </Section>
+
+        {/* File Uploads */}
+        <Section title="File Uploads">
+          <SubSection title="Basic File Upload">
+            <div className="max-w-lg">
+              <FileUpload
+                label="Upload Documents"
+                accept=".pdf,.doc,.docx"
+                maxSize={5 * 1024 * 1024}
+                multiple
+                value={uploadedFiles}
+                onChange={setUploadedFiles}
+                hint="PDF, DOC up to 5MB each"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Image Upload">
+            <div className="max-w-lg">
+              <ImageUpload
+                label="Medical Images"
+                maxSize={10 * 1024 * 1024}
+                value={uploadedImages}
+                onChange={setUploadedImages}
+                hint="Upload X-rays, scans, or photos"
+              />
+            </div>
+          </SubSection>
+
+          <SubSection title="Avatar Upload">
+            <div className="flex items-center gap-8">
+              <AvatarUpload
+                value={avatarFile}
+                onChange={setAvatarFile}
+                size="md"
+              />
+              <AvatarUpload
+                value={avatarFile}
+                onChange={setAvatarFile}
+                size="lg"
               />
             </div>
           </SubSection>
