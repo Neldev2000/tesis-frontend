@@ -162,7 +162,7 @@ export function CircularProgress({
         />
       </svg>
       {showLabel && (
-        <span className="absolute text-xs font-semibold text-midnight">
+        <span className="absolute text-xs font-semibold text-gray-900">
           {Math.round(percentage)}%
         </span>
       )}

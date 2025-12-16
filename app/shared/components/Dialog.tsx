@@ -137,7 +137,7 @@ function DialogRoot({
       >
         {/* Backdrop */}
         <div
-          className="bg-midnight/60 animate-in fade-in duration-200"
+          className="bg-gray-900/60 animate-in fade-in duration-200"
           style={{
             position: "fixed",
             top: 0,
@@ -198,7 +198,7 @@ function DialogHeader({
       {showClose && (
         <button
           onClick={onClose}
-          className="p-1.5 -m-1.5 text-gray-400 hover:text-midnight hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+          className="p-1.5 -m-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
           aria-label="Close dialog"
         >
           <svg
@@ -227,7 +227,7 @@ interface DialogTitleProps {
 
 function DialogTitle({ children, className = "" }: DialogTitleProps) {
   return (
-    <h2 className={`text-lg font-semibold text-midnight ${className}`}>
+    <h2 className={`text-lg font-semibold text-gray-900 ${className}`}>
       {children}
     </h2>
   );

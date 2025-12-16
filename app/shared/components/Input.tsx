@@ -1,5 +1,10 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 
+// 2025 Design: Refined input styles
+// - Softer focus states
+// - Cleaner borders
+// - Better visual hierarchy
+
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: string;
   error?: string;
@@ -10,27 +15,27 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size">
 }
 
 const sizeStyles = {
-  sm: "px-3 py-1.5 text-xs",
-  md: "px-3 py-2 text-sm",
-  lg: "px-4 py-2.5 text-base",
+  sm: "h-8 px-2.5 text-sm",
+  md: "h-9 px-3 text-sm",
+  lg: "h-10 px-3.5 text-sm",
 };
 
 const iconPadding = {
   sm: { left: "pl-8", right: "pr-8" },
-  md: { left: "pl-10", right: "pr-10" },
-  lg: { left: "pl-11", right: "pr-11" },
+  md: { left: "pl-9", right: "pr-9" },
+  lg: { left: "pl-10", right: "pr-10" },
 };
 
 const iconSize = {
   sm: "w-4 h-4",
-  md: "w-5 h-5",
+  md: "w-4 h-4",
   lg: "w-5 h-5",
 };
 
-const iconPosition = {
+const iconPositionStyles = {
   sm: { left: "left-2.5", right: "right-2.5" },
   md: { left: "left-3", right: "right-3" },
-  lg: { left: "left-3.5", right: "right-3.5" },
+  lg: { left: "left-3", right: "right-3" },
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -55,7 +60,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-midnight mb-1.5"
+            className="block text-sm font-medium text-gray-700 mb-1.5"
           >
             {label}
           </label>
@@ -63,7 +68,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {icon && (
             <div
-              className={`absolute top-1/2 -translate-y-1/2 ${iconPosition[inputSize][position]} text-gray-400 pointer-events-none`}
+              className={`absolute top-1/2 -translate-y-1/2 ${iconPositionStyles[inputSize][position]} text-gray-400 pointer-events-none`}
             >
               <span className={iconSize[inputSize]}>{icon}</span>
             </div>
@@ -72,16 +77,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`
-              w-full rounded-lg border bg-white text-midnight placeholder:text-gray-400
-              transition-colors outline-none
+              w-full rounded-md border bg-white text-gray-900 placeholder:text-gray-400
+              transition-all duration-150
+              focus:outline-none
               ${sizeStyles[inputSize]}
               ${icon ? iconPadding[inputSize][position] : ""}
               ${
                 error
-                  ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                  : "border-gray-300 focus:border-viking-500 focus:ring-2 focus:ring-viking-500/20"
+                  ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                  : "border-gray-200 hover:border-gray-300 focus:border-viking-500 focus:ring-2 focus:ring-viking-500/10"
               }
-              disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
+              disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:border-gray-200
               ${className}
             `}
             {...props}
@@ -124,14 +130,14 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             </svg>
           }
           iconPosition="left"
-          className={`${value && onClear ? "pr-10" : ""} ${className}`}
+          className={`${value && onClear ? "pr-9" : ""} ${className}`}
           {...props}
         />
         {value && onClear && (
           <button
             type="button"
             onClick={onClear}
-            className={`absolute top-1/2 -translate-y-1/2 right-3 p-1 text-gray-400 hover:text-gray-600 rounded transition-colors`}
+            className="absolute top-1/2 -translate-y-1/2 right-2.5 p-0.5 text-gray-400 hover:text-gray-600 rounded transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -154,6 +160,12 @@ interface TextareaProps
   textareaSize?: "sm" | "md" | "lg";
 }
 
+const textareaSizeStyles = {
+  sm: "px-2.5 py-2 text-sm",
+  md: "px-3 py-2.5 text-sm",
+  lg: "px-3.5 py-3 text-sm",
+};
+
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
@@ -163,6 +175,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       textareaSize = "md",
       className = "",
       id,
+      rows = 3,
       ...props
     },
     ref
@@ -174,7 +187,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium text-midnight mb-1.5"
+            className="block text-sm font-medium text-gray-700 mb-1.5"
           >
             {label}
           </label>
@@ -182,16 +195,18 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           id={textareaId}
+          rows={rows}
           className={`
-            w-full rounded-lg border bg-white text-midnight placeholder:text-gray-400
-            transition-colors outline-none resize-y min-h-[80px]
-            ${sizeStyles[textareaSize]}
+            w-full rounded-md border bg-white text-gray-900 placeholder:text-gray-400
+            transition-all duration-150
+            focus:outline-none resize-y
+            ${textareaSizeStyles[textareaSize]}
             ${
               error
-                ? "border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-                : "border-gray-300 focus:border-viking-500 focus:ring-2 focus:ring-viking-500/20"
+                ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                : "border-gray-200 hover:border-gray-300 focus:border-viking-500 focus:ring-2 focus:ring-viking-500/10"
             }
-            disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
+            disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:border-gray-200
             ${className}
           `}
           {...props}
@@ -209,3 +224,91 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 );
 
 Textarea.displayName = "Textarea";
+
+// Select component with consistent styling
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+  label?: string;
+  error?: string;
+  hint?: string;
+  options: { value: string; label: string }[];
+  selectSize?: "sm" | "md" | "lg";
+  placeholder?: string;
+}
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  (
+    {
+      label,
+      error,
+      hint,
+      options,
+      selectSize = "md",
+      placeholder,
+      className = "",
+      id,
+      ...props
+    },
+    ref
+  ) => {
+    const selectId = id || label?.toLowerCase().replace(/\s+/g, "-");
+
+    return (
+      <div className="w-full">
+        {label && (
+          <label
+            htmlFor={selectId}
+            className="block text-sm font-medium text-gray-700 mb-1.5"
+          >
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          <select
+            ref={ref}
+            id={selectId}
+            className={`
+              w-full rounded-md border bg-white text-gray-900
+              transition-all duration-150 appearance-none
+              focus:outline-none
+              pr-9
+              ${sizeStyles[selectSize]}
+              ${
+                error
+                  ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
+                  : "border-gray-200 hover:border-gray-300 focus:border-viking-500 focus:ring-2 focus:ring-viking-500/10"
+              }
+              disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed
+              ${className}
+            `}
+            {...props}
+          >
+            {placeholder && (
+              <option value="" disabled>
+                {placeholder}
+              </option>
+            )}
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute top-1/2 -translate-y-1/2 right-2.5 pointer-events-none text-gray-400">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
+        {(error || hint) && (
+          <p
+            className={`mt-1.5 text-xs ${error ? "text-red-600" : "text-gray-500"}`}
+          >
+            {error || hint}
+          </p>
+        )}
+      </div>
+    );
+  }
+);
+
+Select.displayName = "Select";

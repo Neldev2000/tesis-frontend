@@ -98,7 +98,7 @@ function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="flex-1 text-base text-midnight placeholder:text-gray-400 outline-none bg-transparent"
+        className="flex-1 text-base text-gray-900 placeholder:text-gray-400 outline-none bg-transparent"
         autoComplete="off"
       />
       {value && (
@@ -122,7 +122,7 @@ function FilterBar({ filters }: { filters: SearchFilter[] }) {
       {filters.map((filter) => (
         <button
           key={filter.id}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-gray-600 hover:text-midnight hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors whitespace-nowrap"
         >
           {filter.icon}
           <span>{filter.label}</span>
@@ -167,7 +167,7 @@ function ResultItem({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-midnight truncate">{result.title}</span>
+          <span className="text-sm font-medium text-gray-900 truncate">{result.title}</span>
           {result.tag && (
             <span className={`px-1.5 py-0.5 text-xs font-medium rounded ${tagColors[result.tagVariant || "default"]}`}>
               {result.tag}
@@ -242,7 +242,7 @@ function EmptyState({ query }: { query: string }) {
           <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
         </svg>
       </div>
-      <p className="text-sm font-medium text-midnight">
+      <p className="text-sm font-medium text-gray-900">
         {query ? `No results for "${query}"` : "Start typing to search"}
       </p>
       <p className="text-xs text-gray-500 mt-1">
@@ -370,7 +370,7 @@ export function SearchDialog({
     >
       {/* Backdrop */}
       <div
-        className="bg-midnight/60 animate-in fade-in duration-200"
+        className="bg-gray-900/60 animate-in fade-in duration-200"
         style={{
           position: "fixed",
           top: 0,

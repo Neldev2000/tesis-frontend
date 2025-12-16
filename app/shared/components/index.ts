@@ -13,12 +13,15 @@ export {
 export { Stepper, StepContent, type Step } from "./Stepper";
 
 // UI components
-export { Button } from "./Button";
-export { Badge, StatusBadge, PriorityBadge, StockBadge } from "./Badge";
-export { Card, StatCard } from "./Card";
+export { Button, IconButton } from "./Button";
+export { Badge, CountBadge, StatusBadge, PriorityBadge, StockBadge } from "./Badge";
+export { Card, StatCard, MetricCard } from "./Card";
 export { Avatar, AvatarGroup, UserAvatar } from "./Avatar";
 export { Tag, FilterPill, CategoryTag } from "./Tag";
 export { Progress, StockProgress, CircularProgress } from "./Progress";
 export { Table } from "./Table";
-export { Input, SearchInput, Textarea } from "./Input";
+export { Input, SearchInput, Textarea, Select } from "./Input";
 export { EmptyState, NoResultsState, NoDataState, ErrorState } from "./EmptyState";
+
+// Micro-visualizations
+export { Sparkline, MiniBarChart, ProgressRing, TrendIndicator } from "./Sparkline";

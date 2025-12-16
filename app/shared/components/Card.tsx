@@ -1,9 +1,17 @@
 import type { ReactNode } from "react";
 
+// 2025 Design: Ultra-clean card styles inspired by Mercury
+// - Flat by default, optional subtle elevation
+// - Refined borders and minimal shadows
+// - Better spacing system
+
+type CardVariant = "default" | "outlined" | "elevated" | "ghost";
+
 interface CardProps {
   children: ReactNode;
   className?: string;
   padding?: "none" | "sm" | "md" | "lg";
+  variant?: CardVariant;
   hover?: boolean;
   onClick?: () => void;
 }
@@ -12,13 +20,21 @@ const paddingStyles = {
   none: "",
   sm: "p-3",
   md: "p-4",
-  lg: "p-6",
+  lg: "p-5",
+};
+
+const variantStyles: Record<CardVariant, string> = {
+  default: "bg-white border border-gray-200/60",
+  outlined: "bg-white border border-gray-200",
+  elevated: "bg-white border border-gray-100 shadow-sm shadow-gray-200/50",
+  ghost: "bg-gray-50/50",
 };
 
 function CardRoot({
   children,
   className = "",
   padding = "md",
+  variant = "default",
   hover = false,
   onClick,
 }: CardProps) {
@@ -28,9 +44,10 @@ function CardRoot({
     <Component
       onClick={onClick}
       className={`
-        bg-white rounded-xl border border-gray-100 shadow-sm
+        rounded-lg
+        ${variantStyles[variant]}
         ${paddingStyles[padding]}
-        ${hover ? "hover:border-gray-200 hover:shadow-md transition-all cursor-pointer" : ""}
+        ${hover ? "hover:border-gray-300 hover:bg-gray-50/50 transition-colors cursor-pointer" : ""}
         ${onClick ? "text-left w-full" : ""}
         ${className}
       `}
@@ -62,7 +79,7 @@ interface CardTitleProps {
 
 function CardTitle({ children, className = "" }: CardTitleProps) {
   return (
-    <h3 className={`text-base font-semibold text-midnight ${className}`}>
+    <h3 className={`text-sm font-semibold text-gray-900 ${className}`}>
       {children}
     </h3>
   );
@@ -96,7 +113,7 @@ interface CardFooterProps {
 function CardFooter({ children, className = "" }: CardFooterProps) {
   return (
     <div
-      className={`flex items-center justify-between gap-4 pt-4 border-t border-gray-100 ${className}`}
+      className={`flex items-center justify-between gap-4 pt-3 mt-3 border-t border-gray-100 ${className}`}
     >
       {children}
     </div>
@@ -112,7 +129,7 @@ export const Card = Object.assign(CardRoot, {
   Footer: CardFooter,
 });
 
-// StatCard - for displaying metrics
+// StatCard - Modern metric card with micro-visualization support
 interface StatCardProps {
   title: string;
   value: string | number;
@@ -122,22 +139,24 @@ interface StatCardProps {
     direction: "up" | "down" | "neutral";
   };
   icon?: ReactNode;
-  iconColor?: "viking" | "red" | "amber" | "green" | "blue" | "gray";
+  iconColor?: "default" | "red" | "amber" | "green" | "blue" | "gray";
   className?: string;
   onClick?: () => void;
+  /** Optional sparkline or micro-visualization */
+  visualization?: ReactNode;
 }
 
 const iconColorStyles = {
-  viking: "bg-viking-100 text-viking-600",
-  red: "bg-red-100 text-red-600",
-  amber: "bg-amber-100 text-amber-600",
-  green: "bg-green-100 text-green-600",
-  blue: "bg-blue-100 text-blue-600",
-  gray: "bg-gray-100 text-gray-600",
+  default: "bg-gray-100 text-gray-600",
+  red: "bg-red-50 text-red-600",
+  amber: "bg-amber-50 text-amber-600",
+  green: "bg-emerald-50 text-emerald-600",
+  blue: "bg-blue-50 text-blue-600",
+  gray: "bg-gray-100 text-gray-500",
 };
 
-const trendColorStyles = {
-  up: "text-green-600",
+const trendStyles = {
+  up: "text-emerald-600",
   down: "text-red-600",
   neutral: "text-gray-500",
 };
@@ -148,55 +167,96 @@ export function StatCard({
   subtitle,
   trend,
   icon,
-  iconColor = "viking",
+  iconColor = "default",
   className = "",
   onClick,
+  visualization,
 }: StatCardProps) {
   return (
     <Card
       className={className}
+      variant="default"
       hover={!!onClick}
       onClick={onClick}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3">
+        <div className="flex-1 min-w-0 space-y-3">
+          {/* Header with icon and title */}
+          <div className="flex items-center gap-2.5">
             {icon && (
               <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColorStyles[iconColor]}`}
+                className={`w-8 h-8 rounded-md flex items-center justify-center ${iconColorStyles[iconColor]}`}
               >
-                <span className="w-5 h-5 [&>svg]:w-5 [&>svg]:h-5">{icon}</span>
+                <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{icon}</span>
               </div>
             )}
-            <span className="text-sm text-gray-500 font-medium">{title}</span>
+            <span className="text-sm text-gray-500">{title}</span>
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-midnight">{value}</span>
+
+          {/* Value and trend */}
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold text-gray-900 tabular-nums tracking-tight">
+              {value}
+            </span>
             {trend && (
-              <span
-                className={`text-sm font-medium ${trendColorStyles[trend.direction]}`}
-              >
+              <span className={`text-sm font-medium ${trendStyles[trend.direction]}`}>
                 {trend.direction === "up" && "↑"}
                 {trend.direction === "down" && "↓"}
                 {trend.value}
               </span>
             )}
           </div>
+
+          {/* Subtitle */}
           {subtitle && (
-            <span className="block text-sm text-gray-500 mt-1">{subtitle}</span>
+            <span className="block text-xs text-gray-400">{subtitle}</span>
           )}
         </div>
-        {/* Decorative grid icon */}
-        <div className="w-10 h-10 text-gray-100 flex-shrink-0">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
-            />
-          </svg>
-        </div>
+
+        {/* Visualization area (sparkline, chart, etc) */}
+        {visualization && (
+          <div className="flex-shrink-0 w-20 h-10">
+            {visualization}
+          </div>
+        )}
       </div>
     </Card>
+  );
+}
+
+// MetricCard - Compact inline metric for dense layouts
+interface MetricCardProps {
+  label: string;
+  value: string | number;
+  change?: string;
+  changeType?: "positive" | "negative" | "neutral";
+  className?: string;
+}
+
+export function MetricCard({
+  label,
+  value,
+  change,
+  changeType = "neutral",
+  className = "",
+}: MetricCardProps) {
+  const changeColors = {
+    positive: "text-emerald-600",
+    negative: "text-red-600",
+    neutral: "text-gray-500",
+  };
+
+  return (
+    <div className={`${className}`}>
+      <div className="text-xs text-gray-500 mb-1">{label}</div>
+      <div className="flex items-baseline gap-2">
+        <span className="text-lg font-semibold text-gray-900 tabular-nums">{value}</span>
+        {change && (
+          <span className={`text-xs font-medium ${changeColors[changeType]}`}>
+            {change}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }

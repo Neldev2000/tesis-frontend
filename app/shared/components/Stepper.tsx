@@ -114,7 +114,7 @@ function DefaultVariant({
                   <span
                     className={`
                       block text-sm font-medium
-                      ${isCurrent ? "text-viking-600" : isCompleted ? "text-midnight" : "text-gray-500"}
+                      ${isCurrent ? "text-viking-600" : isCompleted ? "text-gray-900" : "text-gray-500"}
                     `}
                   >
                     {step.title}
@@ -157,7 +157,7 @@ function CompactVariant({
         <span className="text-xs text-gray-500">
           Step {currentStep + 1} of {steps.length}
         </span>
-        <h4 className="text-sm font-medium text-midnight">{currentStepData?.title}</h4>
+        <h4 className="text-sm font-medium text-gray-900">{currentStepData?.title}</h4>
       </div>
       <div className="flex gap-1">
         {steps.map((_, index) => (

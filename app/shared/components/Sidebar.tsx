@@ -195,7 +195,7 @@ function TenantSwitcher({
           </svg>
         </div>
         <div className="flex-1 min-w-0 text-left" style={{ pointerEvents: "none" }}>
-          <p className="text-sm font-semibold text-midnight truncate">
+          <p className="text-sm font-semibold text-gray-900 truncate">
             {currentTenantName}
           </p>
         </div>
@@ -240,7 +240,7 @@ function NavItemLink({
         `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
           isActive
             ? "bg-viking-50 text-viking-700"
-            : "text-gray-600 hover:bg-gray-50 hover:text-midnight"
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
         }`
       }
     >
@@ -268,7 +268,7 @@ function UserSection({
     <div className="border-t border-gray-100 p-3 space-y-1">
       <button
         onClick={onSettingsClick}
-        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-midnight rounded-lg w-full transition-colors"
+        className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full transition-colors"
       >
         <svg
           className="w-5 h-5"
@@ -307,7 +307,7 @@ function UserSection({
           </div>
         )}
         <div className="flex-1 min-w-0 text-left">
-          <p className="text-sm font-medium text-midnight truncate">
+          <p className="text-sm font-medium text-gray-900 truncate">
             {user.name}
           </p>
           <p className="text-xs text-gray-500 truncate">{user.role}</p>
@@ -340,7 +340,7 @@ export function Sidebar({
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="bg-midnight/60 lg:hidden animate-in fade-in duration-200"
+          className="bg-gray-900/60 lg:hidden animate-in fade-in duration-200"
           style={{
             position: "fixed",
             top: 0,
@@ -377,7 +377,7 @@ export function Sidebar({
           {/* Mobile close button */}
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-midnight hover:bg-gray-100 rounded-lg lg:hidden flex-shrink-0"
+            className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg lg:hidden flex-shrink-0"
             aria-label="Close menu"
           >
             <svg

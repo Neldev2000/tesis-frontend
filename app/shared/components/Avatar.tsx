@@ -1,7 +1,13 @@
 import type { ReactNode } from "react";
 
+// 2025 Design: Clean, professional avatar styles
+// - Muted color palette for initials
+// - Subtle status indicators
+// - Better contrast and accessibility
+
 type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 type AvatarStatus = "online" | "offline" | "busy" | "away";
+type AvatarColor = "gray" | "blue" | "green" | "amber" | "red" | "violet";
 
 interface AvatarProps {
   src?: string;
@@ -9,23 +15,42 @@ interface AvatarProps {
   initials?: string;
   size?: AvatarSize;
   status?: AvatarStatus;
+  color?: AvatarColor;
   className?: string;
 }
 
-const sizeStyles: Record<AvatarSize, { container: string; text: string; status: string }> = {
-  xs: { container: "w-6 h-6", text: "text-[10px]", status: "w-1.5 h-1.5 border" },
-  sm: { container: "w-8 h-8", text: "text-xs", status: "w-2 h-2 border" },
-  md: { container: "w-10 h-10", text: "text-sm", status: "w-2.5 h-2.5 border-2" },
-  lg: { container: "w-12 h-12", text: "text-base", status: "w-3 h-3 border-2" },
-  xl: { container: "w-16 h-16", text: "text-lg", status: "w-4 h-4 border-2" },
+const sizeStyles: Record<AvatarSize, { container: string; text: string; status: string; statusRing: string }> = {
+  xs: { container: "w-6 h-6", text: "text-[10px]", status: "w-1.5 h-1.5", statusRing: "ring-1" },
+  sm: { container: "w-8 h-8", text: "text-xs", status: "w-2 h-2", statusRing: "ring-[1.5px]" },
+  md: { container: "w-10 h-10", text: "text-sm", status: "w-2.5 h-2.5", statusRing: "ring-2" },
+  lg: { container: "w-12 h-12", text: "text-base", status: "w-3 h-3", statusRing: "ring-2" },
+  xl: { container: "w-16 h-16", text: "text-lg", status: "w-3.5 h-3.5", statusRing: "ring-2" },
 };
 
+// More muted status colors for 2025
 const statusColors: Record<AvatarStatus, string> = {
-  online: "bg-green-500",
-  offline: "bg-gray-400",
+  online: "bg-emerald-500",
+  offline: "bg-gray-300",
   busy: "bg-red-500",
-  away: "bg-amber-500",
+  away: "bg-amber-400",
 };
+
+// Muted avatar background colors
+const avatarColors: Record<AvatarColor, string> = {
+  gray: "bg-gray-100 text-gray-600",
+  blue: "bg-blue-50 text-blue-600",
+  green: "bg-emerald-50 text-emerald-600",
+  amber: "bg-amber-50 text-amber-600",
+  red: "bg-red-50 text-red-600",
+  violet: "bg-violet-50 text-violet-600",
+};
+
+// Generate consistent color from name
+function getColorFromName(name: string): AvatarColor {
+  const colors: AvatarColor[] = ["gray", "blue", "green", "amber", "violet"];
+  const charCode = name.charCodeAt(0) || 0;
+  return colors[charCode % colors.length];
+}
 
 export function Avatar({
   src,
@@ -33,9 +58,11 @@ export function Avatar({
   initials,
   size = "md",
   status,
+  color,
   className = "",
 }: AvatarProps) {
   const styles = sizeStyles[size];
+  const avatarColor = color || getColorFromName(initials || alt);
 
   return (
     <div className={`relative inline-flex flex-shrink-0 ${className}`}>
@@ -47,14 +74,14 @@ export function Avatar({
         />
       ) : (
         <div
-          className={`${styles.container} rounded-full bg-viking-100 text-viking-700 flex items-center justify-center font-medium ${styles.text}`}
+          className={`${styles.container} rounded-full flex items-center justify-center font-medium ${styles.text} ${avatarColors[avatarColor]}`}
         >
           {initials || alt.charAt(0).toUpperCase()}
         </div>
       )}
       {status && (
         <span
-          className={`absolute bottom-0 right-0 ${styles.status} rounded-full border-white ${statusColors[status]}`}
+          className={`absolute bottom-0 right-0 ${styles.status} rounded-full ring-white ${styles.statusRing} ${statusColors[status]}`}
         />
       )}
     </div>
@@ -107,6 +134,7 @@ interface UserAvatarProps {
   initials?: string;
   size?: AvatarSize;
   status?: AvatarStatus;
+  color?: AvatarColor;
   className?: string;
 }
 
@@ -117,21 +145,31 @@ export function UserAvatar({
   initials,
   size = "md",
   status,
+  color,
   className = "",
 }: UserAvatarProps) {
+  const gapStyles: Record<AvatarSize, string> = {
+    xs: "gap-2",
+    sm: "gap-2.5",
+    md: "gap-3",
+    lg: "gap-3",
+    xl: "gap-4",
+  };
+
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center ${gapStyles[size]} ${className}`}>
       <Avatar
         src={src}
         alt={name}
         initials={initials || name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
         size={size}
         status={status}
+        color={color}
       />
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-midnight truncate">{name}</p>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
         {subtitle && (
-          <p className="text-xs text-gray-500 truncate">{subtitle}</p>
+          <p className="text-xs text-gray-500 truncate mt-0.5">{subtitle}</p>
         )}
       </div>
     </div>

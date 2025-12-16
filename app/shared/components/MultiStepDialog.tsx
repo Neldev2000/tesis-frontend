@@ -156,7 +156,7 @@ interface MultiStepDialogTitleProps {
 
 function MultiStepDialogTitle({ children, className = "" }: MultiStepDialogTitleProps) {
   return (
-    <h2 className={`text-lg font-semibold text-midnight ${className}`}>
+    <h2 className={`text-lg font-semibold text-gray-900 ${className}`}>
       {children}
     </h2>
   );
@@ -263,7 +263,7 @@ function MultiStepDialogFooter({
               type="button"
               onClick={prevStep}
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-midnight hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />

@@ -10,7 +10,7 @@ function MenuButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="p-2 -ml-2 text-gray-500 hover:text-midnight hover:bg-gray-100 rounded-lg lg:hidden"
+      className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg lg:hidden"
       aria-label="Open menu"
     >
       <svg
@@ -80,7 +80,7 @@ function NotificationBell({
   return (
     <button
       onClick={onClick}
-      className="relative p-2 text-gray-500 hover:text-midnight hover:bg-gray-100 rounded-lg transition-colors"
+      className="relative p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
       aria-label="Notifications"
     >
       <svg

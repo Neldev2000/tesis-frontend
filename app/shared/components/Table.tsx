@@ -1,13 +1,21 @@
 import type { ReactNode } from "react";
 
+// 2025 Design: Clean Mercury-style table
+// - No uppercase headers
+// - Subtle dividers
+// - Refined hover states
+// - Optional checkbox selection
+
 interface TableProps {
   children: ReactNode;
   className?: string;
+  /** Compact mode reduces padding */
+  compact?: boolean;
 }
 
-function TableRoot({ children, className = "" }: TableProps) {
+function TableRoot({ children, className = "", compact = false }: TableProps) {
   return (
-    <div className={`overflow-x-auto ${className}`}>
+    <div className={`overflow-x-auto ${className}`} data-compact={compact}>
       <table className="w-full">{children}</table>
     </div>
   );
@@ -19,7 +27,11 @@ interface TableHeaderProps {
 }
 
 function TableHeader({ children, className = "" }: TableHeaderProps) {
-  return <thead className={className}>{children}</thead>;
+  return (
+    <thead className={`border-b border-gray-200 ${className}`}>
+      {children}
+    </thead>
+  );
 }
 
 interface TableBodyProps {
@@ -43,8 +55,9 @@ function TableRow({ children, className = "", onClick, selected }: TableRowProps
     <tr
       onClick={onClick}
       className={`
-        ${onClick ? "cursor-pointer hover:bg-gray-50" : ""}
-        ${selected ? "bg-viking-50" : ""}
+        transition-colors
+        ${onClick ? "cursor-pointer hover:bg-gray-50/80" : ""}
+        ${selected ? "bg-viking-50/50" : ""}
         ${className}
       `}
     >
@@ -59,6 +72,7 @@ interface TableHeadProps {
   sortable?: boolean;
   sortDirection?: "asc" | "desc" | null;
   onSort?: () => void;
+  align?: "left" | "center" | "right";
 }
 
 function TableHead({
@@ -67,33 +81,41 @@ function TableHead({
   sortable,
   sortDirection,
   onSort,
+  align = "left",
 }: TableHeadProps) {
+  const alignClasses = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+  };
+
   return (
     <th
       onClick={sortable ? onSort : undefined}
       className={`
-        px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
-        ${sortable ? "cursor-pointer hover:text-midnight select-none" : ""}
+        px-4 py-2.5 text-xs font-medium text-gray-500
+        ${alignClasses[align]}
+        ${sortable ? "cursor-pointer hover:text-gray-900 select-none" : ""}
         ${className}
       `}
     >
-      <div className="flex items-center gap-1">
+      <div className={`inline-flex items-center gap-1.5 ${align === "right" ? "flex-row-reverse" : ""}`}>
         {children}
         {sortable && (
-          <span className="w-4 h-4 flex flex-col items-center justify-center">
+          <span className="w-3 h-3 flex items-center justify-center">
             {sortDirection === "asc" && (
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8l-6 6h12l-6-6z" />
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
               </svg>
             )}
             {sortDirection === "desc" && (
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 16l6-6H6l6 6z" />
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
               </svg>
             )}
             {!sortDirection && (
-              <svg className="w-3 h-3 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8l-4 4h8l-4-4zM12 16l4-4H8l4 4z" />
+              <svg className="w-3 h-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
               </svg>
             )}
           </span>
@@ -106,12 +128,43 @@ function TableHead({
 interface TableCellProps {
   children: ReactNode;
   className?: string;
+  align?: "left" | "center" | "right";
 }
 
-function TableCell({ children, className = "" }: TableCellProps) {
+function TableCell({ children, className = "", align = "left" }: TableCellProps) {
+  const alignClasses = {
+    left: "text-left",
+    center: "text-center",
+    right: "text-right",
+  };
+
   return (
-    <td className={`px-4 py-3 text-sm text-gray-700 ${className}`}>
+    <td className={`px-4 py-3 text-sm text-gray-700 ${alignClasses[align]} ${className}`}>
       {children}
+    </td>
+  );
+}
+
+// Checkbox cell for selection
+interface TableCheckboxProps {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  indeterminate?: boolean;
+  className?: string;
+}
+
+function TableCheckbox({ checked, onChange, indeterminate, className = "" }: TableCheckboxProps) {
+  return (
+    <td className={`px-4 py-3 w-10 ${className}`}>
+      <input
+        type="checkbox"
+        checked={checked}
+        ref={(el) => {
+          if (el) el.indeterminate = indeterminate || false;
+        }}
+        onChange={(e) => onChange(e.target.checked)}
+        className="w-4 h-4 rounded border-gray-300 text-viking-600 focus:ring-viking-500/20 focus:ring-offset-0 cursor-pointer"
+      />
     </td>
   );
 }
@@ -137,10 +190,10 @@ function TableEmpty({
       <td colSpan={colSpan} className="px-4 py-12">
         <div className="flex flex-col items-center justify-center text-center">
           {icon ? (
-            <div className="w-12 h-12 text-gray-300 mb-3">{icon}</div>
+            <div className="w-10 h-10 text-gray-300 mb-3">{icon}</div>
           ) : (
             <svg
-              className="w-12 h-12 text-gray-300 mb-3"
+              className="w-10 h-10 text-gray-300 mb-3"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -153,9 +206,9 @@ function TableEmpty({
               />
             </svg>
           )}
-          <p className="text-sm font-medium text-midnight">{title}</p>
+          <p className="text-sm font-medium text-gray-900">{title}</p>
           {description && (
-            <p className="text-xs text-gray-500 mt-1">{description}</p>
+            <p className="text-xs text-gray-500 mt-1 max-w-sm">{description}</p>
           )}
           {action && <div className="mt-4">{action}</div>}
         </div>
@@ -164,14 +217,16 @@ function TableEmpty({
   );
 }
 
-// Pagination component
+// Pagination component - Mercury style
 interface TablePaginationProps {
   currentPage: number;
   totalPages: number;
-  totalItems: number;
-  itemsPerPage: number;
+  totalItems?: number;
+  itemsPerPage?: number;
   onPageChange: (page: number) => void;
   className?: string;
+  /** Show simple "< >" navigation only */
+  simple?: boolean;
 }
 
 function TablePagination({
@@ -181,11 +236,45 @@ function TablePagination({
   itemsPerPage,
   onPageChange,
   className = "",
+  simple = false,
 }: TablePaginationProps) {
-  const startItem = (currentPage - 1) * itemsPerPage + 1;
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+  const showItemCount = totalItems !== undefined && itemsPerPage !== undefined;
+  const startItem = showItemCount ? (currentPage - 1) * itemsPerPage! + 1 : 0;
+  const endItem = showItemCount ? Math.min(currentPage * itemsPerPage!, totalItems!) : 0;
 
-  const pages = [];
+  if (simple) {
+    return (
+      <div className={`flex items-center justify-between px-4 py-3 border-t border-gray-100 ${className}`}>
+        <span className="text-sm text-gray-500">
+          {totalItems} {totalItems === 1 ? "item" : "items"}
+        </span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label="Previous page"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label="Next page"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const pages: (number | string)[] = [];
   for (let i = 1; i <= totalPages; i++) {
     if (
       i === 1 ||
@@ -199,18 +288,21 @@ function TablePagination({
   }
 
   return (
-    <div
-      className={`flex items-center justify-between px-4 py-3 border-t border-gray-100 ${className}`}
-    >
-      <span className="text-sm text-gray-500">
-        Showing <span className="font-medium">{startItem}-{endItem}</span> of{" "}
-        <span className="font-medium">{totalItems}</span> items
-      </span>
-      <div className="flex items-center gap-1">
+    <div className={`flex items-center justify-between px-4 py-3 border-t border-gray-100 ${className}`}>
+      {showItemCount ? (
+        <span className="text-sm text-gray-500">
+          <span className="text-gray-700 font-medium">{startItem}–{endItem}</span> of {totalItems}
+        </span>
+      ) : (
+        <span className="text-sm text-gray-500">
+          Page {currentPage} of {totalPages}
+        </span>
+      )}
+      <div className="flex items-center gap-0.5">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="p-1.5 text-gray-500 hover:text-midnight hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -218,19 +310,19 @@ function TablePagination({
         </button>
         {pages.map((page, index) =>
           page === "..." ? (
-            <span key={`ellipsis-${index}`} className="px-2 text-gray-400">
-              ...
+            <span key={`ellipsis-${index}`} className="px-1 text-gray-400 text-sm">
+              ···
             </span>
           ) : (
             <button
               key={page}
               onClick={() => onPageChange(page as number)}
               className={`
-                min-w-[32px] h-8 px-2 text-sm font-medium rounded transition-colors
+                min-w-[28px] h-7 px-2 text-sm font-medium rounded-md transition-colors
                 ${
                   currentPage === page
-                    ? "bg-viking-500 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
                 }
               `}
             >
@@ -241,7 +333,7 @@ function TablePagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="p-1.5 text-gray-500 hover:text-midnight hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -259,6 +351,7 @@ export const Table = Object.assign(TableRoot, {
   Row: TableRow,
   Head: TableHead,
   Cell: TableCell,
+  Checkbox: TableCheckbox,
   Empty: TableEmpty,
   Pagination: TablePagination,
 });
