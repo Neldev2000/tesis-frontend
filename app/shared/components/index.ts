@@ -18,10 +18,10 @@ export { Badge, CountBadge, StatusBadge, PriorityBadge, StockBadge } from "./Bad
 export { Card, StatCard, MetricCard } from "./Card";
 export { Avatar, AvatarGroup, UserAvatar } from "./Avatar";
 export { Tag, FilterPill, CategoryTag } from "./Tag";
-export { Progress, StockProgress, CircularProgress } from "./Progress";
+export { Progress, StockProgress, CircularProgress, MiniRing } from "./Progress";
 export { Table } from "./Table";
 export { Input, SearchInput, Textarea, Select } from "./Input";
 export { EmptyState, NoResultsState, NoDataState, ErrorState } from "./EmptyState";
 
 // Micro-visualizations
-export { Sparkline, MiniBarChart, ProgressRing, TrendIndicator } from "./Sparkline";
+export { Sparkline, MiniBarChart, ProgressRing, TrendIndicator, StockIndicator } from "./Sparkline";

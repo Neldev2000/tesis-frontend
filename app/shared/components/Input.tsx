@@ -77,7 +77,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`
-              w-full rounded-md border bg-white text-gray-900 placeholder:text-gray-400
+              w-full rounded-xl border bg-white text-gray-900 placeholder:text-gray-400
               transition-all duration-150
               focus:outline-none
               ${sizeStyles[inputSize]}
@@ -197,7 +197,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={textareaId}
           rows={rows}
           className={`
-            w-full rounded-md border bg-white text-gray-900 placeholder:text-gray-400
+            w-full rounded-xl border bg-white text-gray-900 placeholder:text-gray-400
             transition-all duration-150
             focus:outline-none resize-y
             ${textareaSizeStyles[textareaSize]}
@@ -267,7 +267,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ref={ref}
             id={selectId}
             className={`
-              w-full rounded-md border bg-white text-gray-900
+              w-full rounded-xl border bg-white text-gray-900
               transition-all duration-150 appearance-none
               focus:outline-none
               pr-9

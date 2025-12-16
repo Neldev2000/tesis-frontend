@@ -56,7 +56,7 @@ function TableRow({ children, className = "", onClick, selected }: TableRowProps
       onClick={onClick}
       className={`
         transition-colors
-        ${onClick ? "cursor-pointer hover:bg-gray-50/80" : ""}
+        ${onClick ? "cursor-pointer hover:bg-gray-50/80 group" : ""}
         ${selected ? "bg-viking-50/50" : ""}
         ${className}
       `}
@@ -165,6 +165,24 @@ function TableCheckbox({ checked, onChange, indeterminate, className = "" }: Tab
         onChange={(e) => onChange(e.target.checked)}
         className="w-4 h-4 rounded border-gray-300 text-viking-600 focus:ring-viking-500/20 focus:ring-offset-0 cursor-pointer"
       />
+    </td>
+  );
+}
+
+// Row action indicator (chevron) - shows on hover for clickable rows
+// Use as last cell in a row to indicate it's clickable
+function TableRowAction({ className = "" }: { className?: string }) {
+  return (
+    <td className={`px-4 py-3 w-8 text-right ${className}`}>
+      <svg
+        className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors ml-auto"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={1.5}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+      </svg>
     </td>
   );
 }
@@ -352,6 +370,7 @@ export const Table = Object.assign(TableRoot, {
   Head: TableHead,
   Cell: TableCell,
   Checkbox: TableCheckbox,
+  RowAction: TableRowAction,
   Empty: TableEmpty,
   Pagination: TablePagination,
 });

@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   Button,
   Card,
   Avatar,
-  UserAvatar,
+  AvatarGroup,
   StatusBadge,
-  Table,
   MultiStepDialog,
   Input,
   Textarea,
   Sparkline,
   TrendIndicator,
+  StockIndicator,
   type Step,
 } from "~/shared/components";
 
@@ -47,7 +47,7 @@ const todaySchedule = [
     patient: "John Doe",
     type: "Routine Checkup",
     room: "Room 302",
-    time: "09:00 AM",
+    time: "09:00",
     status: "completed" as const,
   },
   {
@@ -55,7 +55,7 @@ const todaySchedule = [
     patient: "Jane Smith",
     type: "General Consultation",
     room: "Room 105",
-    time: "10:30 AM",
+    time: "10:30",
     status: "confirmed" as const,
   },
   {
@@ -63,23 +63,23 @@ const todaySchedule = [
     patient: "Robert Brown",
     type: "Post-Op Follow-up",
     room: "Room 204",
-    time: "01:00 PM",
+    time: "13:00",
     status: "pending" as const,
   },
   {
     id: 4,
     patient: "Emily Davis",
-    type: "Blood Work & Lab Test",
+    type: "Blood Work & Lab",
     room: "Lab A",
-    time: "02:30 PM",
+    time: "14:30",
     status: "confirmed" as const,
   },
 ];
 
 const lowStockItems = [
-  { name: "Amoxicillin 500mg", category: "Antibiotics", units: 15, reorder: 20, critical: true },
-  { name: "Ibuprofen 400mg", category: "Pain Relief", units: 45, reorder: 50, critical: false },
-  { name: "Insulin Glargine", category: "Diabetes", units: 8, reorder: 10, critical: true },
+  { name: "Amoxicillin 500mg", current: 15, max: 100, reorder: 20 },
+  { name: "Ibuprofen 400mg", current: 45, max: 100, reorder: 50 },
+  { name: "Insulin Glargine", current: 8, max: 50, reorder: 10 },
 ];
 
 const recentPatients = [
@@ -108,31 +108,24 @@ const appointmentSteps: Step[] = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [addPatientOpen, setAddPatientOpen] = useState(false);
   const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 18) return "Good Afternoon";
-    return "Good Evening";
-  };
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6">
+      {/* Compact Header - reduced prominence */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">
-            {getGreeting()}, Dr. Smith
-          </h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Here's what's happening in your clinic today.
+          <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
+          <p className="text-sm text-gray-500">
+            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
           </p>
         </div>
         <div className="flex gap-2">
+          {/* Secondary action - ghost/outline */}
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
             icon={
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -143,6 +136,7 @@ export default function Dashboard() {
           >
             Add Patient
           </Button>
+          {/* Primary action - solid */}
           <Button
             variant="primary"
             size="sm"
@@ -158,230 +152,250 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stat Cards - More refined with sparklines */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Total Patients */}
-        <Card variant="default" padding="md">
-          <div className="flex items-start justify-between">
+      {/* ═══════════════════════════════════════════════════════════════════════
+          BENTO GRID LAYOUT - True asymmetric grid with independent heights
+          ═══════════════════════════════════════════════════════════════════════ */}
+
+      {/* Row 1: Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* HERO: Total Patients - wider card */}
+        {/* Using primary viking color for main stat, emerald only for positive trend */}
+        <Card variant="default" padding="lg" className="lg:col-span-2">
+          <div className="flex items-center justify-between">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <div className="w-9 h-9 rounded-xl bg-viking-50 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-viking-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                   </svg>
                 </div>
-                <span className="text-sm text-gray-500">Total Patients</span>
+                <span className="text-sm font-medium text-gray-500">Total Patients</span>
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-semibold text-gray-900 tabular-nums">{statsData.patients.value}</span>
+              <div className="flex items-baseline gap-3">
+                <span className="text-5xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.patients.value}</span>
                 <TrendIndicator value={statsData.patients.change} direction={statsData.patients.direction} />
               </div>
             </div>
-            <Sparkline data={statsData.patients.sparkline} color="success" filled className="mt-2" />
+            <Sparkline data={statsData.patients.sparkline} color="default" width={140} height={56} />
           </div>
         </Card>
 
-        {/* Today's Appointments */}
-        <Card variant="default" padding="md">
-          <div className="flex items-start justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                  </svg>
-                </div>
-                <span className="text-sm text-gray-500">Today's Appointments</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-semibold text-gray-900 tabular-nums">{statsData.appointments.value}</span>
-                <span className="text-xs text-gray-400">{statsData.appointments.remaining} remaining</span>
-              </div>
+        {/* Today's Appointments - compact */}
+        {/* Using gray icon - color only for semantic meaning */}
+        <Card variant="default" padding="lg">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
+              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
             </div>
-            <Sparkline data={statsData.appointments.sparkline} color="default" />
+            <span className="text-sm font-medium text-gray-500">Today</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-4xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.appointments.value}</span>
+              <span className="text-sm text-gray-400 ml-1">appts</span>
+              <p className="text-xs text-gray-400 mt-1">{statsData.appointments.remaining} remaining</p>
+            </div>
+            <Sparkline data={statsData.appointments.sparkline} color="default" width={64} height={32} />
           </div>
         </Card>
 
-        {/* Inventory Alerts */}
-        <Card variant="default" padding="md">
-          <div className="flex items-start justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-                  </svg>
-                </div>
-                <span className="text-sm text-gray-500">Inventory Alerts</span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-semibold text-gray-900 tabular-nums">{statsData.alerts.value}</span>
-                <span className="text-xs text-gray-400">{statsData.alerts.label}</span>
-              </div>
+        {/* Inventory Alerts - compact */}
+        {/* Amber only because it's a warning/alert - semantic color use */}
+        <Card variant="default" padding="lg">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+              <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium text-gray-500">Alerts</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-4xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.alerts.value}</span>
+              <span className="text-sm text-gray-400 ml-1">low</span>
             </div>
             <Link
               to="inventory"
-              className="text-xs font-medium text-gray-500 hover:text-gray-700 mt-2"
+              className="text-xs font-medium text-viking-500 hover:text-viking-600 transition-colors"
             >
+              View →
+            </Link>
+          </div>
+        </Card>
+      </div>
+
+      {/* Row 2: Main Content - Asymmetric heights */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        {/* Today's Schedule - TALL card */}
+        <Card className="lg:col-span-2" padding="none">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100/60">
+            <h3 className="text-sm font-semibold text-gray-900">Today's Schedule</h3>
+            <Link to="appointments" className="text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors">
               View all →
             </Link>
           </div>
-        </Card>
-      </div>
-
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Today's Schedule */}
-        <Card className="lg:col-span-2" padding="none">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-900">Today's Schedule</h3>
-              <Link to="appointments" className="text-xs font-medium text-gray-500 hover:text-gray-700">
-                View Calendar →
-              </Link>
-            </div>
-          </div>
-          <div className="divide-y divide-gray-50">
+          {/* Compact schedule - single line per appointment, no tennis match scanning */}
+          <div className="divide-y divide-gray-100/60">
             {todaySchedule.map((appointment) => (
               <div
                 key={appointment.id}
-                className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/50 transition-colors"
+                className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50/50 transition-colors group cursor-pointer"
               >
-                <StatusDot status={appointment.status} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{appointment.patient}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">{appointment.type} • {appointment.room}</p>
+                {/* Time + status indicator grouped */}
+                <div className="flex items-center gap-2 w-20 flex-shrink-0">
+                  <StatusDot status={appointment.status} />
+                  <span className="text-sm font-medium text-gray-900 tabular-nums">{appointment.time}</span>
                 </div>
-                <TimeChip time={appointment.time} status={appointment.status} />
+                {/* Patient + type + room - all inline */}
+                <div className="flex-1 min-w-0 flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-900 truncate">{appointment.patient}</span>
+                  <span className="text-gray-300">·</span>
+                  <span className="text-sm text-gray-500 truncate">{appointment.type}</span>
+                  <span className="text-xs text-gray-400 bg-gray-100/60 px-1.5 py-0.5 rounded flex-shrink-0">{appointment.room}</span>
+                </div>
+                {/* Chevron on hover */}
+                <svg
+                  className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Low Stock */}
-        <Card padding="none" className="flex flex-col">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                <h3 className="text-sm font-medium text-gray-900">Low Stock</h3>
-              </div>
-              <Link to="inventory" className="text-xs font-medium text-amber-600 hover:text-amber-700">
-                Order
-              </Link>
-            </div>
+        {/* Low Stock - SHORT card */}
+        <Card padding="none">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100/60">
+            <h3 className="text-sm font-semibold text-gray-900">Low Stock</h3>
+            <Link to="inventory" className="text-xs font-medium text-amber-500 hover:text-amber-600 transition-colors">
+              Order →
+            </Link>
           </div>
-          <div className="flex-1 divide-y divide-gray-50">
+          <div className="p-5 space-y-4">
             {lowStockItems.map((item, index) => (
-              <div key={index} className="px-5 py-3.5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{item.category}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-semibold tabular-nums ${item.critical ? 'text-red-600' : 'text-amber-600'}`}>
-                      {item.units} units
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Reorder: {item.reorder}</p>
-                  </div>
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-900">{item.name}</span>
+                  <span className="text-xs text-gray-500 tabular-nums">{item.current}/{item.max}</span>
                 </div>
+                <StockIndicator
+                  current={item.current}
+                  max={item.max}
+                  reorderLevel={item.reorder}
+                  size="md"
+                />
               </div>
             ))}
-          </div>
-          <div className="px-5 py-3 border-t border-gray-100">
-            <Link
-              to="inventory"
-              className="block text-center text-xs text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              View Inventory Report
-            </Link>
           </div>
         </Card>
       </div>
 
-      {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Patients */}
-        <Card className="lg:col-span-2" padding="none">
-          <div className="px-5 py-4 border-b border-gray-100">
+      {/* Row 3: Bottom section - different layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
+        {/* Available Doctors - COMPACT with AvatarGroup header */}
+        <Card padding="none">
+          <div className="px-5 py-4 border-b border-gray-100/60">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-900">Recent Patients</h3>
-              <Link to="patients" className="text-xs font-medium text-gray-500 hover:text-gray-700">
-                View All →
-              </Link>
+              <h3 className="text-sm font-semibold text-gray-900">Available Now</h3>
+              <AvatarGroup size="xs">
+                {availableDoctors.filter(d => d.status === 'online').map((doctor, index) => (
+                  <Avatar
+                    key={index}
+                    alt={doctor.name}
+                    size="xs"
+                    initials={doctor.name.split(' ').slice(1).map(n => n[0]).join('')}
+                    status="online"
+                  />
+                ))}
+              </AvatarGroup>
             </div>
           </div>
-          <Table>
-            <Table.Header>
-              <Table.Row>
-                <Table.Head>Patient</Table.Head>
-                <Table.Head>ID</Table.Head>
-                <Table.Head>Condition</Table.Head>
-                <Table.Head>Status</Table.Head>
-                <Table.Head className="w-16">{""}</Table.Head>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {recentPatients.map((patient) => (
-                <Table.Row key={patient.id}>
-                  <Table.Cell>
-                    <div className="flex items-center gap-2.5">
-                      <Avatar
-                        alt={patient.name}
-                        size="sm"
-                        initials={patient.name.split(' ').map(n => n[0]).join('')}
-                      />
-                      <span className="text-sm font-medium text-gray-900">{patient.name}</span>
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="text-xs text-gray-500 tabular-nums">{patient.id}</span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span className="text-sm text-gray-600">{patient.condition}</span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <StatusBadge status={patient.status} />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      to={`patients/${patient.id}`}
-                      className="text-xs font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      View
-                    </Link>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        </Card>
-
-        {/* Available Doctors */}
-        <Card padding="none">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <h3 className="text-sm font-medium text-gray-900">Available Doctors</h3>
-          </div>
-          <div className="divide-y divide-gray-50">
+          <div className="p-4 space-y-2">
             {availableDoctors.map((doctor, index) => (
-              <div key={index} className="flex items-center justify-between px-5 py-3.5">
-                <UserAvatar
-                  name={doctor.name}
-                  subtitle={`${doctor.specialty} • ${doctor.ext === "Break" ? "On Break" : `Ext ${doctor.ext}`}`}
+              <div key={index} className="flex items-center gap-3 py-1">
+                <Avatar
+                  alt={doctor.name}
                   size="sm"
+                  initials={doctor.name.split(' ').slice(1).map(n => n[0]).join('')}
                   status={doctor.status}
                 />
-                <button
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
-                  title="Call"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
-                  </svg>
-                </button>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900 truncate">{doctor.name}</p>
+                  <p className="text-xs text-gray-500">{doctor.specialty} · ext {doctor.ext}</p>
+                </div>
               </div>
             ))}
+          </div>
+        </Card>
+
+        {/* Recent Patients - WIDE */}
+        <Card className="lg:col-span-3" padding="none">
+          <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100/60">
+            <h3 className="text-sm font-semibold text-gray-900">Recent Patients</h3>
+            <Link to="patients" className="text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors">
+              View all →
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-2.5">Patient</th>
+                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-2.5">ID</th>
+                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-2.5">Condition</th>
+                  <th className="text-left text-xs font-medium text-gray-500 px-5 py-2.5">Status</th>
+                  <th className="w-8"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100/60">
+                {recentPatients.map((patient) => (
+                  <tr
+                    key={patient.id}
+                    onClick={() => navigate(`patients/${patient.id}`)}
+                    className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
+                  >
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          alt={patient.name}
+                          size="sm"
+                          initials={patient.name.split(' ').map(n => n[0]).join('')}
+                        />
+                        <span className="text-sm font-medium text-gray-900">{patient.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="text-xs text-gray-500 tabular-nums">{patient.id}</span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="text-sm text-gray-600">{patient.condition}</span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <StatusBadge status={patient.status} />
+                    </td>
+                    <td className="px-3 py-3">
+                      <svg
+                        className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </Card>
       </div>
@@ -482,11 +496,11 @@ export default function Dashboard() {
                   </svg>
                 }
               />
-              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+              <div className="space-y-2 max-h-48 overflow-y-auto">
                 {recentPatients.map((patient) => (
                   <button
                     key={patient.id}
-                    className="w-full flex items-center gap-2.5 p-2.5 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
                   >
                     <Avatar alt={patient.name} size="sm" initials={patient.name.split(' ').map(n => n[0]).join('')} />
                     <div>
@@ -542,54 +556,16 @@ export default function Dashboard() {
   );
 }
 
-// Refined status dot - smaller and more subtle
+// Compact status dot - small colored circle
 function StatusDot({ status }: { status: "completed" | "confirmed" | "pending" | "cancelled" }) {
-  const styles = {
-    completed: "bg-emerald-500",
-    confirmed: "bg-blue-500",
-    pending: "bg-amber-500",
-    cancelled: "bg-gray-400",
-  };
-
-  const icons = {
-    completed: (
-      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-      </svg>
-    ),
-    confirmed: (
-      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-      </svg>
-    ),
-    pending: (
-      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-      </svg>
-    ),
-    cancelled: (
-      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-      </svg>
-    ),
+  const colors = {
+    completed: "bg-emerald-400",
+    confirmed: "bg-blue-400",
+    pending: "bg-amber-400",
+    cancelled: "bg-gray-300",
   };
 
   return (
-    <div className={`w-6 h-6 rounded-full ${styles[status]} flex items-center justify-center flex-shrink-0`}>
-      {icons[status]}
-    </div>
+    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${colors[status]}`} />
   );
-}
-
-// Time chip component
-function TimeChip({ time, status }: { time: string; status: string }) {
-  const baseStyles = "text-xs font-medium px-2 py-1 rounded";
-
-  if (status === "completed") {
-    return <span className={`${baseStyles} bg-gray-100 text-gray-500`}>{time}</span>;
-  }
-  if (status === "pending") {
-    return <span className={`${baseStyles} bg-amber-50 text-amber-700`}>{time}</span>;
-  }
-  return <span className={`${baseStyles} bg-blue-50 text-blue-700`}>{time}</span>;
 }

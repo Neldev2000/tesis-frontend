@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 
-// 2025 Design: Muted, professional badge styles
-// - Softer colors with subtle backgrounds
-// - Better contrast ratios
-// - Multiple style variants (solid, soft, outline)
+// 2025 Design: Clean, professional badge styles
+// - Ghost/outline as default for non-critical states
+// - Dot indicators for status communication
+// - Solid ONLY for critical alerts
+// - Minimal, non-distracting visual noise
 
 type BadgeVariant = "default" | "primary" | "success" | "warning" | "danger" | "info";
-type BadgeStyle = "soft" | "outline" | "solid";
+type BadgeStyle = "ghost" | "outline" | "soft" | "solid";
 type BadgeSize = "xs" | "sm" | "md";
 
 interface BadgeProps {
@@ -16,32 +17,44 @@ interface BadgeProps {
   size?: BadgeSize;
   icon?: ReactNode;
   dot?: boolean;
+  /** Pulsing dot animation for active/critical states */
+  pulse?: boolean;
   className?: string;
 }
 
-// Soft style (default) - muted backgrounds
-const softStyles: Record<BadgeVariant, string> = {
-  default: "bg-gray-100 text-gray-600",
-  primary: "bg-viking-50 text-viking-700",
-  success: "bg-emerald-50 text-emerald-700",
-  warning: "bg-amber-50 text-amber-700",
-  danger: "bg-red-50 text-red-700",
-  info: "bg-blue-50 text-blue-700",
+// Ghost style (default) - minimal, just text with slight background
+const ghostStyles: Record<BadgeVariant, string> = {
+  default: "bg-gray-50 text-gray-600",
+  primary: "bg-viking-50/50 text-viking-600",
+  success: "bg-emerald-50/50 text-emerald-600",
+  warning: "bg-amber-50/50 text-amber-600",
+  danger: "bg-red-50/50 text-red-600",
+  info: "bg-blue-50/50 text-blue-600",
 };
 
-// Outline style - border with transparent bg
+// Outline style - clean border, white background
 const outlineStyles: Record<BadgeVariant, string> = {
   default: "border border-gray-200 text-gray-600 bg-white",
-  primary: "border border-viking-200 text-viking-700 bg-white",
-  success: "border border-emerald-200 text-emerald-700 bg-white",
-  warning: "border border-amber-200 text-amber-700 bg-white",
-  danger: "border border-red-200 text-red-700 bg-white",
-  info: "border border-blue-200 text-blue-700 bg-white",
+  primary: "border border-viking-200/60 text-viking-600 bg-white",
+  success: "border border-emerald-200/60 text-emerald-600 bg-white",
+  warning: "border border-amber-200/60 text-amber-600 bg-white",
+  danger: "border border-red-200/60 text-red-600 bg-white",
+  info: "border border-blue-200/60 text-blue-600 bg-white",
 };
 
-// Solid style - for emphasis
+// Soft style - subtle background (use sparingly)
+const softStyles: Record<BadgeVariant, string> = {
+  default: "bg-gray-100/80 text-gray-700",
+  primary: "bg-viking-100/60 text-viking-700",
+  success: "bg-emerald-100/60 text-emerald-700",
+  warning: "bg-amber-100/60 text-amber-700",
+  danger: "bg-red-100/60 text-red-700",
+  info: "bg-blue-100/60 text-blue-700",
+};
+
+// Solid style - ONLY for critical alerts
 const solidStyles: Record<BadgeVariant, string> = {
-  default: "bg-gray-500 text-white",
+  default: "bg-gray-600 text-white",
   primary: "bg-viking-600 text-white",
   success: "bg-emerald-600 text-white",
   warning: "bg-amber-500 text-white",
@@ -49,6 +62,7 @@ const solidStyles: Record<BadgeVariant, string> = {
   info: "bg-blue-600 text-white",
 };
 
+// Dot colors - slightly muted for elegance
 const dotStyles: Record<BadgeVariant, string> = {
   default: "bg-gray-400",
   primary: "bg-viking-500",
@@ -67,29 +81,38 @@ const sizeStyles: Record<BadgeSize, { badge: string; dot: string; icon: string }
 export function Badge({
   children,
   variant = "default",
-  style = "soft",
+  style = "ghost",
   size = "sm",
   icon,
   dot = false,
+  pulse = false,
   className = "",
 }: BadgeProps) {
   const styleMap = {
-    soft: softStyles,
+    ghost: ghostStyles,
     outline: outlineStyles,
+    soft: softStyles,
     solid: solidStyles,
   };
 
   return (
     <span
       className={`
-        inline-flex items-center font-medium rounded-md
+        inline-flex items-center font-medium rounded-lg
         ${styleMap[style][variant]}
         ${sizeStyles[size].badge}
         ${className}
       `}
     >
       {dot && (
-        <span className={`rounded-full flex-shrink-0 ${sizeStyles[size].dot} ${dotStyles[variant]}`} />
+        <span className="relative flex-shrink-0">
+          {pulse && (
+            <span
+              className={`absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping ${dotStyles[variant]}`}
+            />
+          )}
+          <span className={`relative rounded-full ${sizeStyles[size].dot} ${dotStyles[variant]}`} />
+        </span>
       )}
       {icon && <span className={`flex-shrink-0 ${sizeStyles[size].icon}`}>{icon}</span>}
       {children}
@@ -134,6 +157,7 @@ export function CountBadge({
 }
 
 // Preset status badges for common use cases
+// Uses ghost/outline with dots for non-critical, solid only for critical
 export function StatusBadge({
   status,
   className = "",
@@ -151,24 +175,28 @@ export function StatusBadge({
 }) {
   const statusConfig: Record<
     string,
-    { label: string; variant: BadgeVariant; dot?: boolean; style?: BadgeStyle }
+    { label: string; variant: BadgeVariant; dot?: boolean; pulse?: boolean; style?: BadgeStyle }
   > = {
-    admitted: { label: "Admitted", variant: "success", dot: true },
-    discharged: { label: "Discharged", variant: "default" },
-    observation: { label: "Observation", variant: "warning", dot: true },
-    critical: { label: "Critical", variant: "danger", dot: true },
-    pending: { label: "Pending", variant: "default", style: "outline" },
-    confirmed: { label: "Confirmed", variant: "success" },
-    cancelled: { label: "Cancelled", variant: "danger", style: "outline" },
-    completed: { label: "Completed", variant: "primary" },
+    // Active states - use dots to show "live" status
+    admitted: { label: "Admitted", variant: "success", dot: true, style: "ghost" },
+    observation: { label: "Observation", variant: "warning", dot: true, style: "ghost" },
+    critical: { label: "Critical", variant: "danger", dot: true, pulse: true, style: "solid" },
+    // Completed/inactive states - clean outline
+    discharged: { label: "Discharged", variant: "default", style: "outline" },
+    completed: { label: "Completed", variant: "success", style: "outline" },
+    // Pending/neutral states - minimal ghost
+    pending: { label: "Pending", variant: "default", dot: true, style: "ghost" },
+    confirmed: { label: "Confirmed", variant: "success", dot: true, style: "ghost" },
+    cancelled: { label: "Cancelled", variant: "default", style: "outline" },
   };
 
   const config = statusConfig[status];
   return (
     <Badge
       variant={config.variant}
-      style={config.style || "soft"}
+      style={config.style || "ghost"}
       dot={config.dot}
+      pulse={config.pulse}
       size="xs"
       className={className}
     >
@@ -177,7 +205,7 @@ export function StatusBadge({
   );
 }
 
-// Priority badge
+// Priority badge - only urgent uses solid
 export function PriorityBadge({
   priority,
   className = "",
@@ -185,22 +213,29 @@ export function PriorityBadge({
   priority: "urgent" | "high" | "normal" | "low";
   className?: string;
 }) {
-  const priorityConfig: Record<string, { label: string; variant: BadgeVariant; style: BadgeStyle }> = {
-    urgent: { label: "Urgent", variant: "danger", style: "solid" },
-    high: { label: "High", variant: "warning", style: "soft" },
-    normal: { label: "Normal", variant: "default", style: "soft" },
-    low: { label: "Low", variant: "info", style: "outline" },
+  const priorityConfig: Record<string, { label: string; variant: BadgeVariant; style: BadgeStyle; dot?: boolean; pulse?: boolean }> = {
+    urgent: { label: "Urgent", variant: "danger", style: "solid", dot: true, pulse: true },
+    high: { label: "High", variant: "warning", style: "ghost", dot: true },
+    normal: { label: "Normal", variant: "default", style: "ghost" },
+    low: { label: "Low", variant: "default", style: "outline" },
   };
 
   const config = priorityConfig[priority];
   return (
-    <Badge variant={config.variant} style={config.style} size="xs" className={className}>
+    <Badge
+      variant={config.variant}
+      style={config.style}
+      dot={config.dot}
+      pulse={config.pulse}
+      size="xs"
+      className={className}
+    >
       {config.label}
     </Badge>
   );
 }
 
-// Stock level badge
+// Stock level badge - clean dots instead of icons, solid only for critical
 export function StockBadge({
   level,
   className = "",
@@ -210,39 +245,13 @@ export function StockBadge({
 }) {
   const levelConfig: Record<
     string,
-    { label: string; variant: BadgeVariant; style: BadgeStyle; icon?: ReactNode }
+    { label: string; variant: BadgeVariant; style: BadgeStyle; dot?: boolean; pulse?: boolean }
   > = {
-    high: { label: "In Stock", variant: "success", style: "soft" },
-    good: { label: "Good", variant: "success", style: "soft" },
+    high: { label: "In Stock", variant: "success", style: "ghost", dot: true },
+    good: { label: "Good", variant: "success", style: "ghost", dot: true },
     adequate: { label: "Adequate", variant: "default", style: "outline" },
-    low: {
-      label: "Low Stock",
-      variant: "warning",
-      style: "soft",
-      icon: (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-          />
-        </svg>
-      ),
-    },
-    critical: {
-      label: "Critical",
-      variant: "danger",
-      style: "solid",
-      icon: (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-          />
-        </svg>
-      ),
-    },
+    low: { label: "Low Stock", variant: "warning", style: "ghost", dot: true },
+    critical: { label: "Critical", variant: "danger", style: "solid", dot: true, pulse: true },
   };
 
   const config = levelConfig[level];
@@ -250,8 +259,9 @@ export function StockBadge({
     <Badge
       variant={config.variant}
       style={config.style}
+      dot={config.dot}
+      pulse={config.pulse}
       size="xs"
-      icon={config.icon}
       className={className}
     >
       {config.label}

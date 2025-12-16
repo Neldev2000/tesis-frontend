@@ -78,16 +78,14 @@ function TenantSwitcher({
         width: popoverStyle.width,
         zIndex: 99999,
       }}
-      className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+      className="bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08),0_8px_24px_rgba(0,0,0,0.12)] overflow-hidden"
     >
       <div className="py-1">
         {hospitals.map((hospital) => (
           <button
             key={hospital.id}
             onClick={() => handleSwitch(hospital.id)}
-            className={`flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors ${
-              hospital.id === currentTenantId ? "bg-viking-50" : ""
-            }`}
+            className="flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
           >
             <div
               className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 ${
@@ -237,19 +235,29 @@ function NavItemLink({
       end={item.href === ""}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+        `relative flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
           isActive
-            ? "bg-viking-50 text-viking-700"
-            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            ? "text-gray-900"
+            : "text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
         }`
       }
     >
-      <span className="w-5 h-5 flex-shrink-0">{item.icon}</span>
-      <span className="flex-1">{item.label}</span>
-      {item.badge !== undefined && item.badge > 0 && (
-        <span className="bg-red-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-          {item.badge > 99 ? "99+" : item.badge}
-        </span>
+      {({ isActive }) => (
+        <>
+          {/* Subtle left indicator for active state */}
+          {isActive && (
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-viking-500 rounded-full" />
+          )}
+          <span className={`w-5 h-5 flex-shrink-0 transition-colors ${isActive ? "text-viking-600" : ""}`}>
+            {item.icon}
+          </span>
+          <span className="flex-1">{item.label}</span>
+          {item.badge !== undefined && item.badge > 0 && (
+            <span className="bg-red-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+              {item.badge > 99 ? "99+" : item.badge}
+            </span>
+          )}
+        </>
       )}
     </NavLink>
   );
@@ -265,7 +273,7 @@ function UserSection({
   onProfileClick?: () => void;
 }) {
   return (
-    <div className="border-t border-gray-100 p-3 space-y-1">
+    <div className="border-t border-gray-100/60 p-3 space-y-1">
       <button
         onClick={onSettingsClick}
         className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg w-full transition-colors"
@@ -359,13 +367,14 @@ export function Sidebar({
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 z-50 h-screen w-64 bg-white border-r border-gray-100
+          fixed left-0 top-0 z-50 h-screen w-64 bg-white
+          shadow-[1px_0_0_rgba(0,0,0,0.04)]
           flex flex-col transition-transform duration-300 ease-in-out
           lg:z-30
           ${isOpen ? "sidebar-transform-visible" : "sidebar-transform-hidden"}
         `}
       >
-        <div className="flex items-center gap-1 p-2 border-b border-gray-100">
+        <div className="flex items-center gap-1 p-2 border-b border-gray-100/60">
           <div className="flex-1 min-w-0">
             <TenantSwitcher
               currentTenantId={tenantId}
