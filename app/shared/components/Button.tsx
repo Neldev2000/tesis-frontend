@@ -12,45 +12,60 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-// 2025 Design: More subtle, refined button styles
-// - Softer shadows and borders
-// - Muted color tones
-// - Refined hover states with subtle transforms
+// 2025 Design: PREMIUM button styles with micro-textures
+// - Subtle gradient shine on solid buttons (not flat)
+// - Structured, technical look (less rounded than typical)
+// - Desaturated, sophisticated colors
+// - Visible but subtle borders for depth
 const variantStyles: Record<ButtonVariant, string> = {
+  // Primary: Solid with subtle shine gradient
   primary: `
-    bg-viking-600 text-white
-    hover:bg-viking-700
-    active:bg-viking-800
-    focus-visible:ring-2 focus-visible:ring-viking-500/30 focus-visible:ring-offset-1
+    bg-viking-600 text-white btn-shine
+    border border-viking-700/20
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.1)]
+    hover:bg-viking-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_4px_rgba(0,0,0,0.12)]
+    active:bg-viking-800 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]
+    focus-visible:ring-2 focus-visible:ring-viking-500/40 focus-visible:ring-offset-1
   `,
+  // Secondary: Clean border, subtle depth
   secondary: `
-    bg-white text-gray-700
-    border border-gray-200
-    hover:bg-gray-50 hover:border-gray-300
-    active:bg-gray-100
-    focus-visible:ring-2 focus-visible:ring-gray-400/20 focus-visible:ring-offset-1
+    bg-white text-slate-700
+    border border-slate-200
+    shadow-[0_1px_2px_rgba(0,0,0,0.04)]
+    hover:bg-slate-50 hover:border-slate-300 hover:shadow-[0_2px_4px_rgba(0,0,0,0.06)]
+    active:bg-slate-100 active:shadow-[inset_0_1px_2px_rgba(0,0,0,0.05)]
+    focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:ring-offset-1
   `,
+  // Soft: Muted background
   soft: `
-    bg-viking-50 text-viking-700
-    hover:bg-viking-100
+    bg-viking-50/80 text-viking-700
+    border border-viking-100/50
+    hover:bg-viking-100/80 hover:border-viking-200/50
     active:bg-viking-150
     focus-visible:ring-2 focus-visible:ring-viking-500/20 focus-visible:ring-offset-1
   `,
+  // Ghost: Minimal, technical
   ghost: `
-    bg-transparent text-gray-600
-    hover:bg-gray-100/80 hover:text-gray-900
-    active:bg-gray-200/60
-    focus-visible:ring-2 focus-visible:ring-gray-400/20 focus-visible:ring-offset-1
+    bg-transparent text-slate-600
+    hover:bg-slate-100/70 hover:text-slate-800
+    active:bg-slate-200/50
+    focus-visible:ring-2 focus-visible:ring-slate-400/20 focus-visible:ring-offset-1
   `,
+  // Danger: Solid with shine
   danger: `
-    bg-red-600 text-white
-    hover:bg-red-700
+    bg-red-600 text-white btn-shine
+    border border-red-700/20
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.1)]
+    hover:bg-red-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_4px_rgba(0,0,0,0.12)]
     active:bg-red-800
     focus-visible:ring-2 focus-visible:ring-red-500/30 focus-visible:ring-offset-1
   `,
+  // Success: Solid with shine
   success: `
-    bg-emerald-600 text-white
-    hover:bg-emerald-700
+    bg-emerald-600 text-white btn-shine
+    border border-emerald-700/20
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.1)]
+    hover:bg-emerald-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_4px_rgba(0,0,0,0.12)]
     active:bg-emerald-800
     focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:ring-offset-1
   `,
@@ -58,7 +73,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 
 const sizeStyles: Record<ButtonSize, string> = {
   xs: "h-7 px-2.5 text-xs gap-1.5",
-  sm: "h-8 px-3 text-sm gap-1.5",
+  sm: "h-8 px-3 text-[13px] gap-1.5",
   md: "h-9 px-4 text-sm gap-2",
   lg: "h-10 px-5 text-sm gap-2",
 };
@@ -94,8 +109,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
         className={`
           inline-flex items-center justify-center font-medium
-          rounded-xl
-          transition-all duration-150 ease-out
+          rounded-lg
+          transition-all duration-100 ease-out
           focus:outline-none
           disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
           select-none
@@ -181,8 +196,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         title={label}
         className={`
           inline-flex items-center justify-center
-          rounded-xl
-          transition-all duration-150 ease-out
+          rounded-lg
+          transition-all duration-100 ease-out
           focus:outline-none
           disabled:opacity-50 disabled:cursor-not-allowed
           ${variantStyles[variant]}

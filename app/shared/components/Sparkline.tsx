@@ -1,56 +1,36 @@
 import type { SVGProps } from "react";
 
-// 2025 Design: Premium micro-visualizations
-// - Smooth Bezier curves (no spiky lines!)
-// - Gradient fill that fades to transparent
-// - Calm, non-anxious visualization
+// 2025 Design: TECHNICAL micro-visualizations
+// - NOT smooth Bezier curves (that looks AI-generated)
+// - Thin vertical bars or connected dots for real data feel
+// - Data points visible - shows "real numbers behind"
+// - Bloomberg/Linear aesthetic - dense, technical, credible
 
 interface SparklineProps {
   data: number[];
   width?: number;
   height?: number;
   color?: "default" | "success" | "danger" | "warning" | "blue";
-  strokeWidth?: number;
-  filled?: boolean;
+  /** "line" for connected dots, "bars" for thin vertical bars */
+  variant?: "line" | "bars";
   className?: string;
 }
 
+// More sophisticated, desaturated palette
 const colorMap = {
-  default: { stroke: "#9ca3af", fill: "#9ca3af" },
-  success: { stroke: "#10b981", fill: "#10b981" },
-  danger: { stroke: "#f87171", fill: "#f87171" },
-  warning: { stroke: "#fbbf24", fill: "#fbbf24" },
-  blue: { stroke: "#60a5fa", fill: "#60a5fa" },
+  default: { stroke: "#64748b", fill: "#64748b", dot: "#475569" },
+  success: { stroke: "#059669", fill: "#059669", dot: "#047857" },
+  danger: { stroke: "#dc2626", fill: "#dc2626", dot: "#b91c1c" },
+  warning: { stroke: "#d97706", fill: "#d97706", dot: "#b45309" },
+  blue: { stroke: "#2563eb", fill: "#2563eb", dot: "#1d4ed8" },
 };
-
-// Generate smooth Bezier curve path from points
-function generateSmoothPath(points: { x: number; y: number }[]): string {
-  if (points.length < 2) return "";
-
-  // Start at first point
-  let path = `M ${points[0].x},${points[0].y}`;
-
-  for (let i = 0; i < points.length - 1; i++) {
-    const current = points[i];
-    const next = points[i + 1];
-
-    // Calculate control points for smooth curve
-    const midX = (current.x + next.x) / 2;
-
-    // Use cubic bezier with horizontal control points for smooth curves
-    path += ` C ${midX},${current.y} ${midX},${next.y} ${next.x},${next.y}`;
-  }
-
-  return path;
-}
 
 export function Sparkline({
   data,
   width = 96,
   height = 40,
   color = "default",
-  strokeWidth = 2,
-  filled = true,
+  variant = "line",
   className = "",
 }: SparklineProps) {
   if (data.length < 2) return null;
@@ -59,23 +39,56 @@ export function Sparkline({
   const max = Math.max(...data);
   const range = max - min || 1;
 
-  const padding = { x: 2, y: 4 };
+  const padding = { x: 4, y: 6 };
   const chartWidth = width - padding.x * 2;
   const chartHeight = height - padding.y * 2;
+
+  const colors = colorMap[color];
 
   // Generate points
   const points = data.map((value, index) => ({
     x: padding.x + (index / (data.length - 1)) * chartWidth,
     y: padding.y + chartHeight - ((value - min) / range) * chartHeight,
+    value,
   }));
 
-  const linePath = generateSmoothPath(points);
+  if (variant === "bars") {
+    // Thin vertical bars - Bloomberg-style
+    const barWidth = Math.max(2, chartWidth / data.length - 2);
+    const gap = (chartWidth - barWidth * data.length) / (data.length - 1);
 
-  // Area path for gradient fill
-  const areaPath = `${linePath} L ${points[points.length - 1].x},${height} L ${points[0].x},${height} Z`;
+    return (
+      <svg
+        width={width}
+        height={height}
+        className={className}
+        viewBox={`0 0 ${width} ${height}`}
+      >
+        {data.map((value, index) => {
+          const barHeight = Math.max(2, ((value - min) / range) * chartHeight);
+          const x = padding.x + index * (barWidth + gap);
+          const y = height - padding.y - barHeight;
+          const isLast = index === data.length - 1;
 
-  const colors = colorMap[color];
-  const gradientId = `sparkline-gradient-${color}-${Math.random().toString(36).substr(2, 9)}`;
+          return (
+            <rect
+              key={index}
+              x={x}
+              y={y}
+              width={barWidth}
+              height={barHeight}
+              rx={1}
+              fill={colors.fill}
+              fillOpacity={isLast ? 1 : 0.35}
+            />
+          );
+        })}
+      </svg>
+    );
+  }
+
+  // Line variant with visible data points - technical feel
+  const linePath = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x},${p.y}`).join(" ");
 
   return (
     <svg
@@ -84,39 +97,48 @@ export function Sparkline({
       className={className}
       viewBox={`0 0 ${width} ${height}`}
     >
-      <defs>
-        {/* Gradient that fades very subtly to transparent - almost invisible at bottom */}
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={colors.fill} stopOpacity={0.12} />
-          <stop offset="50%" stopColor={colors.fill} stopOpacity={0.04} />
-          <stop offset="100%" stopColor={colors.fill} stopOpacity={0} />
-        </linearGradient>
-      </defs>
+      {/* Baseline reference - subtle */}
+      <line
+        x1={padding.x}
+        y1={height - padding.y}
+        x2={width - padding.x}
+        y2={height - padding.y}
+        stroke={colors.stroke}
+        strokeOpacity={0.1}
+        strokeWidth={1}
+      />
 
-      {/* Filled area with gradient */}
-      {filled && (
-        <path
-          d={areaPath}
-          fill={`url(#${gradientId})`}
-        />
-      )}
-
-      {/* Smooth line */}
+      {/* Data line - straight segments, not curved */}
       <path
         d={linePath}
         fill="none"
         stroke={colors.stroke}
-        strokeWidth={strokeWidth}
+        strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
 
-      {/* End dot - subtle */}
+      {/* Data points - small dots at each value */}
+      {points.map((point, index) => (
+        <circle
+          key={index}
+          cx={point.x}
+          cy={point.y}
+          r={index === points.length - 1 ? 3 : 1.5}
+          fill={index === points.length - 1 ? colors.dot : colors.stroke}
+          fillOpacity={index === points.length - 1 ? 1 : 0.6}
+        />
+      ))}
+
+      {/* End value highlight ring */}
       <circle
         cx={points[points.length - 1].x}
         cy={points[points.length - 1].y}
-        r={3}
-        fill={colors.stroke}
+        r={5}
+        fill="none"
+        stroke={colors.stroke}
+        strokeWidth={1}
+        strokeOpacity={0.2}
       />
     </svg>
   );

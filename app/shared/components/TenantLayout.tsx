@@ -186,8 +186,8 @@ export function TenantLayout({
         onProfileClick={onProfileClick}
       />
 
-      {/* Main content - responsive margin */}
-      <div className="lg:ml-64 flex flex-col min-h-screen">
+      {/* Main content - responsive margin (matches sidebar w-60) */}
+      <div className="lg:ml-60 flex flex-col min-h-screen">
         <Header
           notificationCount={notificationCount}
           onSearchClick={() => setSearchOpen(true)}

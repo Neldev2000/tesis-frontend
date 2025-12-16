@@ -10,7 +10,6 @@ import {
   Input,
   Textarea,
   Sparkline,
-  TrendIndicator,
   StockIndicator,
   type Step,
 } from "~/shared/components";
@@ -113,17 +112,16 @@ export default function Dashboard() {
   const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
 
   return (
-    <div className="space-y-6">
-      {/* Compact Header - responsive for mobile */}
+    <div className="space-y-4">
+      {/* Header - Technical, dense */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500">
-            {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+          <h1 className="text-base font-semibold text-slate-900">Dashboard</h1>
+          <p className="text-xs text-slate-500 font-mono">
+            {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
           </p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          {/* Secondary action - ghost/outline */}
           <Button
             variant="ghost"
             size="sm"
@@ -137,7 +135,6 @@ export default function Dashboard() {
           >
             Add Patient
           </Button>
-          {/* Primary action - solid */}
           <Button
             variant="primary"
             size="sm"
@@ -154,83 +151,48 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          BENTO GRID LAYOUT - True asymmetric grid with independent heights
-          ═══════════════════════════════════════════════════════════════════════ */}
-
-      {/* Row 1: Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* HERO: Total Patients - wider card */}
-        {/* Using primary viking color for main stat, emerald only for positive trend */}
-        <Card variant="default" padding="lg" className="lg:col-span-2">
-          <div className="flex items-center justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-viking-50 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-viking-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-gray-500">Total Patients</span>
-              </div>
-              <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.patients.value}</span>
-                <TrendIndicator value={statsData.patients.change} direction={statsData.patients.direction} />
-              </div>
-            </div>
-            <Sparkline data={statsData.patients.sparkline} color="default" width={140} height={56} />
+      {/* Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Patients */}
+        <Card variant="default" padding="lg">
+          <p className="text-[13px] text-slate-500 mb-1">Active Patients</p>
+          <div className="flex items-baseline gap-3">
+            <span className="text-[32px] font-semibold text-slate-900 tabular-nums tracking-tight">{statsData.patients.value}</span>
+            <span className="text-[13px] text-emerald-600 font-medium">{statsData.patients.change}</span>
+          </div>
+          <div className="mt-4 pt-3 border-t border-slate-100">
+            <Sparkline data={statsData.patients.sparkline} color="default" variant="line" width={200} height={32} />
           </div>
         </Card>
 
-        {/* Today's Appointments - compact */}
-        {/* Using gray icon - color only for semantic meaning */}
+        {/* Appointments */}
         <Card variant="default" padding="lg">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-gray-500">Today</span>
+          <p className="text-[13px] text-slate-500 mb-1">Today's Schedule</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[32px] font-semibold text-slate-900 tabular-nums tracking-tight">{statsData.appointments.value}</span>
+            <span className="text-[15px] text-slate-400">of {statsData.appointments.value + statsData.appointments.remaining}</span>
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-4xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.appointments.value}</span>
-              <span className="text-sm text-gray-400 ml-1">appts</span>
-              <p className="text-xs text-gray-400 mt-1">{statsData.appointments.remaining} remaining</p>
-            </div>
-            <Sparkline data={statsData.appointments.sparkline} color="default" width={64} height={32} />
-          </div>
+          <p className="text-[12px] text-slate-400 mt-1">{statsData.appointments.remaining} remaining today</p>
         </Card>
 
-        {/* Inventory Alerts - compact */}
-        {/* Amber only because it's a warning/alert - semantic color use */}
+        {/* Low Stock */}
         <Card variant="default" padding="lg">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-              <svg className="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium text-gray-500">Alerts</span>
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[13px] text-slate-500">Low Stock Items</p>
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-4xl font-bold text-gray-900 tabular-nums tracking-tight">{statsData.alerts.value}</span>
-              <span className="text-sm text-gray-400 ml-1">low</span>
-            </div>
-            <Link
-              to="inventory"
-              className="text-xs font-medium text-viking-500 hover:text-viking-600 transition-colors"
-            >
-              View →
-            </Link>
-          </div>
+          <span className="text-[32px] font-semibold text-slate-900 tabular-nums tracking-tight">{statsData.alerts.value}</span>
+          <Link
+            to="inventory"
+            className="block text-[12px] text-viking-600 hover:text-viking-700 mt-2"
+          >
+            Review inventory →
+          </Link>
         </Card>
       </div>
 
       {/* Row 2: Main Content - Asymmetric heights */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Today's Schedule - TALL card */}
         <Card className="lg:col-span-2" padding="none">
           <div className="px-5 py-4 flex items-center justify-between border-b border-gray-100/60">

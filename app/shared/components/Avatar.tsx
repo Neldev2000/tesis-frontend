@@ -27,22 +27,22 @@ const sizeStyles: Record<AvatarSize, { container: string; text: string; status: 
   xl: { container: "w-16 h-16", text: "text-lg", status: "w-3.5 h-3.5", statusRing: "ring-2" },
 };
 
-// More muted status colors for 2025
+// Muted status colors - subtle, not flashy
 const statusColors: Record<AvatarStatus, string> = {
   online: "bg-emerald-500",
-  offline: "bg-gray-300",
-  busy: "bg-red-500",
+  offline: "bg-slate-300",
+  busy: "bg-red-400",
   away: "bg-amber-400",
 };
 
-// Muted avatar background colors
+// Muted avatar background colors - using slate-based palette for professional look
 const avatarColors: Record<AvatarColor, string> = {
-  gray: "bg-gray-100 text-gray-600",
-  blue: "bg-blue-50 text-blue-600",
-  green: "bg-emerald-50 text-emerald-600",
-  amber: "bg-amber-50 text-amber-600",
-  red: "bg-red-50 text-red-600",
-  violet: "bg-violet-50 text-violet-600",
+  gray: "bg-slate-100 text-slate-600",
+  blue: "bg-slate-100 text-slate-600",
+  green: "bg-slate-100 text-slate-600",
+  amber: "bg-slate-100 text-slate-600",
+  red: "bg-slate-100 text-slate-600",
+  violet: "bg-slate-100 text-slate-600",
 };
 
 // Generate consistent color from name
@@ -117,7 +117,7 @@ export function AvatarGroup({
       ))}
       {remainingCount > 0 && (
         <div
-          className={`${styles.container} rounded-full bg-gray-100 text-gray-600 flex items-center justify-center font-medium ${styles.text} ring-2 ring-white`}
+          className={`${styles.container} rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium ${styles.text} ring-2 ring-white`}
         >
           +{remainingCount}
         </div>
@@ -167,9 +167,9 @@ export function UserAvatar({
         color={color}
       />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
+        <p className="text-sm font-medium text-slate-900 truncate">{name}</p>
         {subtitle && (
-          <p className="text-xs text-gray-500 truncate mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-500 truncate mt-0.5">{subtitle}</p>
         )}
       </div>
     </div>

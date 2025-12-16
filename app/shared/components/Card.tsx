@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-// 2025 Design: Premium card styles - "Surgical Precision" aesthetic
-// - NO borders, use surface elevation with ultra-diffuse shadows
-// - Larger border-radius (16-20px) for organic, touchable feel
-// - Background contrast instead of lines for separation
-// - Bento grid ready
+// 2025 Design: STRUCTURED card styles - Linear/Vercel aesthetic
+// - Subtle borders for structure (not floating/bubbly)
+// - Moderate border-radius (12px) - technical, not "soft"
+// - Colored shadows but with visible structure
+// - Dense, professional feel
 
 type CardVariant = "default" | "elevated" | "ghost" | "flat";
 
@@ -19,23 +19,34 @@ interface CardProps {
 
 const paddingStyles = {
   none: "",
-  sm: "p-4",
-  md: "p-5",
-  lg: "p-6",
-  xl: "p-8",
+  sm: "p-3",
+  md: "p-4",
+  lg: "p-5",
+  xl: "p-6",
 };
 
-// Premium shadow styles - colored tint shadows (not gray!)
-// Uses indigo/teal tint for depth - feels like it "glows" not "dirties"
+// Clean card styles - minimal, purposeful
 const variantStyles: Record<CardVariant, string> = {
-  // Default: White surface with subtle colored shadow (indigo tint)
-  default: "bg-white shadow-[0_1px_3px_rgba(99,102,241,0.04),0_4px_16px_rgba(99,102,241,0.06)]",
-  // Elevated: More prominent colored shadow for important cards
-  elevated: "bg-white shadow-[0_2px_8px_rgba(99,102,241,0.06),0_12px_32px_rgba(99,102,241,0.1)]",
-  // Ghost: Subtle background, no shadow
-  ghost: "bg-gray-50/60",
-  // Flat: Pure white, minimal styling
-  flat: "bg-white",
+  // Default: Clean white surface with subtle border
+  default: `
+    bg-white
+    border border-slate-200/60
+  `,
+  // Elevated: Slight shadow for layering
+  elevated: `
+    bg-white
+    border border-slate-200/50
+    shadow-sm
+  `,
+  // Ghost: Muted background for secondary content
+  ghost: `
+    bg-slate-50/80
+    border border-slate-200/40
+  `,
+  // Flat: No border, just surface
+  flat: `
+    bg-white
+  `,
 };
 
 function CardRoot({
@@ -52,10 +63,10 @@ function CardRoot({
     <Component
       onClick={onClick}
       className={`
-        rounded-2xl
+        rounded-xl
         ${variantStyles[variant]}
         ${paddingStyles[padding]}
-        ${hover ? "hover:shadow-[0_4px_12px_rgba(99,102,241,0.08),0_16px_40px_rgba(99,102,241,0.12)] transition-shadow duration-200 cursor-pointer" : ""}
+        ${hover ? "hover:border-slate-300/60 hover:shadow-[0_4px_12px_rgba(15,23,42,0.08),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-150 cursor-pointer" : ""}
         ${onClick ? "text-left w-full" : ""}
         ${className}
       `}
@@ -87,7 +98,7 @@ interface CardTitleProps {
 
 function CardTitle({ children, className = "" }: CardTitleProps) {
   return (
-    <h3 className={`text-sm font-medium text-gray-600 ${className}`}>
+    <h3 className={`text-sm font-medium text-slate-700 ${className}`}>
       {children}
     </h3>
   );
@@ -100,7 +111,7 @@ interface CardDescriptionProps {
 
 function CardDescription({ children, className = "" }: CardDescriptionProps) {
   return (
-    <p className={`text-sm text-gray-500 mt-0.5 ${className}`}>{children}</p>
+    <p className={`text-sm text-slate-500 mt-0.5 ${className}`}>{children}</p>
   );
 }
 
@@ -121,7 +132,7 @@ interface CardFooterProps {
 function CardFooter({ children, className = "" }: CardFooterProps) {
   return (
     <div
-      className={`flex items-center justify-between gap-4 pt-4 mt-4 border-t border-gray-100/80 ${className}`}
+      className={`flex items-center justify-between gap-4 pt-3 mt-3 border-t border-slate-100/60 ${className}`}
     >
       {children}
     </div>
@@ -154,20 +165,20 @@ interface StatCardProps {
   visualization?: ReactNode;
 }
 
-// Pastel backgrounds with saturated icons - premium look
+// Muted pastel backgrounds with saturated icons
 const iconColorStyles = {
-  default: "bg-gray-100/80 text-gray-500",
-  red: "bg-red-50/80 text-red-500",
-  amber: "bg-amber-50/80 text-amber-500",
-  green: "bg-emerald-50/80 text-emerald-500",
-  blue: "bg-blue-50/80 text-blue-500",
-  violet: "bg-violet-50/80 text-violet-500",
+  default: "bg-slate-100/70 text-slate-500",
+  red: "bg-red-50/70 text-red-600",
+  amber: "bg-amber-50/70 text-amber-600",
+  green: "bg-emerald-50/70 text-emerald-600",
+  blue: "bg-blue-50/70 text-blue-600",
+  violet: "bg-violet-50/70 text-violet-600",
 };
 
 const trendStyles = {
-  up: "text-emerald-500",
-  down: "text-red-500",
-  neutral: "text-gray-400",
+  up: "text-emerald-600",
+  down: "text-red-600",
+  neutral: "text-slate-400",
 };
 
 export function StatCard({
@@ -190,26 +201,26 @@ export function StatCard({
       onClick={onClick}
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0 space-y-4">
+        <div className="flex-1 min-w-0 space-y-3">
           {/* Title - small and secondary */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             {icon && (
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconColorStyles[iconColor]}`}
+                className={`w-9 h-9 rounded-lg flex items-center justify-center ${iconColorStyles[iconColor]}`}
               >
-                <span className="w-5 h-5 [&>svg]:w-5 [&>svg]:h-5">{icon}</span>
+                <span className="w-4 h-4 [&>svg]:w-4 [&>svg]:h-4">{icon}</span>
               </div>
             )}
-            <span className="text-sm font-medium text-gray-500">{title}</span>
+            <span className="text-[13px] font-medium text-slate-500">{title}</span>
           </div>
 
           {/* Value - THE HERO */}
-          <div className="flex items-baseline gap-3">
-            <span className="text-4xl font-bold text-gray-900 tabular-nums tracking-tight">
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-semibold text-slate-900 tabular-nums tracking-tight font-mono">
               {value}
             </span>
             {trend && (
-              <span className={`text-sm font-medium ${trendStyles[trend.direction]}`}>
+              <span className={`text-xs font-medium ${trendStyles[trend.direction]}`}>
                 {trend.direction === "up" && "↑"}
                 {trend.direction === "down" && "↓"}
                 {trend.value}
@@ -219,13 +230,13 @@ export function StatCard({
 
           {/* Subtitle */}
           {subtitle && (
-            <span className="block text-xs text-gray-400">{subtitle}</span>
+            <span className="block text-xs text-slate-400">{subtitle}</span>
           )}
         </div>
 
         {/* Visualization area */}
         {visualization && (
-          <div className="flex-shrink-0 w-24 h-12 mt-2">
+          <div className="flex-shrink-0 w-20 h-10 mt-1">
             {visualization}
           </div>
         )}
@@ -251,16 +262,16 @@ export function MetricCard({
   className = "",
 }: MetricCardProps) {
   const changeColors = {
-    positive: "text-emerald-500",
-    negative: "text-red-500",
-    neutral: "text-gray-400",
+    positive: "text-emerald-600",
+    negative: "text-red-600",
+    neutral: "text-slate-400",
   };
 
   return (
     <div className={`${className}`}>
-      <div className="text-xs font-medium text-gray-500 mb-1">{label}</div>
+      <div className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">{label}</div>
       <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-bold text-gray-900 tabular-nums">{value}</span>
+        <span className="text-xl font-semibold text-slate-900 tabular-nums font-mono">{value}</span>
         {change && (
           <span className={`text-xs font-medium ${changeColors[changeType]}`}>
             {change}

@@ -1,8 +1,7 @@
-// 2025 Design: Premium progress bars & rings
-// - Consistent with design system (Tailwind-based)
-// - Soft colored tracks
-// - Subtle gradients
-// - Cohesive with other components
+// 2025 Design: Clean progress bars & rings
+// - Muted, professional colors
+// - No flashy gradients
+// - Slate-based palette for consistency
 
 type ProgressVariant = "default" | "success" | "warning" | "danger" | "info";
 type ProgressSize = "sm" | "md" | "lg";
@@ -18,22 +17,22 @@ interface ProgressProps {
   className?: string;
 }
 
-// Gradient bar styles - subtle shine effect
+// Solid, muted bar styles - no gradients
 const barStyles: Record<ProgressVariant, string> = {
-  default: "bg-gradient-to-r from-viking-500 via-viking-400 to-viking-500",
-  success: "bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500",
-  warning: "bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500",
-  danger: "bg-gradient-to-r from-red-500 via-red-400 to-red-500",
-  info: "bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500",
+  default: "bg-slate-600",
+  success: "bg-emerald-600",
+  warning: "bg-amber-500",
+  danger: "bg-red-500",
+  info: "bg-slate-500",
 };
 
-// Soft colored track backgrounds
+// Subtle slate-based track backgrounds
 const trackStyles: Record<ProgressVariant, string> = {
-  default: "bg-viking-100/40",
-  success: "bg-emerald-100/40",
-  warning: "bg-amber-100/40",
-  danger: "bg-red-100/40",
-  info: "bg-blue-100/40",
+  default: "bg-slate-200/60",
+  success: "bg-slate-200/60",
+  warning: "bg-slate-200/60",
+  danger: "bg-slate-200/60",
+  info: "bg-slate-200/60",
 };
 
 const sizeStyles: Record<ProgressSize, string> = {
@@ -58,14 +57,14 @@ export function Progress({
     <div className={className}>
       {(showLabel || label || showPercentage) && (
         <div className="flex items-center justify-between mb-1.5">
-          {label && <span className="text-xs font-medium text-gray-600">{label}</span>}
+          {label && <span className="text-xs font-medium text-slate-600">{label}</span>}
           {showPercentage && (
-            <span className="text-xs font-medium text-gray-500 tabular-nums">
+            <span className="text-xs font-medium text-slate-500 tabular-nums">
               {Math.round(percentage)}%
             </span>
           )}
           {showLabel && !showPercentage && (
-            <span className="text-xs font-medium text-gray-500 tabular-nums">
+            <span className="text-xs font-medium text-slate-500 tabular-nums">
               {value}/{max}
             </span>
           )}
@@ -132,13 +131,13 @@ interface CircularProgressProps {
   className?: string;
 }
 
-// Colors for circular progress
+// Muted colors for circular progress - slate-based tracks
 const ringColors: Record<ProgressVariant, { stroke: string; track: string }> = {
-  default: { stroke: "#0d9488", track: "#ccfbf1" },
-  success: { stroke: "#10b981", track: "#d1fae5" },
-  warning: { stroke: "#f59e0b", track: "#fef3c7" },
-  danger: { stroke: "#ef4444", track: "#fee2e2" },
-  info: { stroke: "#3b82f6", track: "#dbeafe" },
+  default: { stroke: "#475569", track: "#e2e8f0" }, // slate-600, slate-200
+  success: { stroke: "#059669", track: "#e2e8f0" }, // emerald-600, slate-200
+  warning: { stroke: "#d97706", track: "#e2e8f0" }, // amber-600, slate-200
+  danger: { stroke: "#dc2626", track: "#e2e8f0" }, // red-600, slate-200
+  info: { stroke: "#64748b", track: "#e2e8f0" }, // slate-500, slate-200
 };
 
 export function CircularProgress({
@@ -183,7 +182,7 @@ export function CircularProgress({
         />
       </svg>
       {showLabel && (
-        <span className="absolute text-xs font-semibold text-gray-700 tabular-nums">
+        <span className="absolute text-xs font-semibold text-slate-700 tabular-nums">
           {Math.round(percentage)}%
         </span>
       )}

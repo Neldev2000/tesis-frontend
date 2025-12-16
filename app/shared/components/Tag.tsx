@@ -13,9 +13,9 @@ interface TagProps {
 }
 
 const variantStyles: Record<TagVariant, string> = {
-  default: "bg-gray-100 text-gray-700 hover:bg-gray-200",
-  primary: "bg-viking-100 text-viking-700 hover:bg-viking-200",
-  outline: "bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-50",
+  default: "bg-slate-100 text-slate-700 hover:bg-slate-200/80",
+  primary: "bg-slate-700 text-white hover:bg-slate-800",
+  outline: "bg-transparent border border-slate-200 text-slate-600 hover:bg-slate-50",
 };
 
 const sizeStyles: Record<TagSize, string> = {
@@ -78,12 +78,12 @@ export function FilterPill({
     <button
       onClick={onClick}
       className={`
-        inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full
+        inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md
         transition-colors whitespace-nowrap
         ${
           active
-            ? "bg-viking-500 text-white"
-            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+            ? "bg-slate-900 text-white"
+            : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300"
         }
         ${className}
       `}
@@ -93,8 +93,8 @@ export function FilterPill({
       {count !== undefined && (
         <span
           className={`
-            ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full
-            ${active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"}
+            ml-1 px-1.5 py-0.5 text-xs font-medium rounded
+            ${active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-500"}
           `}
         >
           {count}
@@ -111,14 +111,15 @@ interface CategoryTagProps {
   className?: string;
 }
 
+// Muted category colors - all slate-based for consistency
 const categoryColors: Record<string, string> = {
-  gray: "bg-gray-100 text-gray-700",
-  blue: "bg-blue-100 text-blue-700",
-  green: "bg-green-100 text-green-700",
-  red: "bg-red-100 text-red-700",
-  amber: "bg-amber-100 text-amber-700",
-  purple: "bg-purple-100 text-purple-700",
-  pink: "bg-pink-100 text-pink-700",
+  gray: "bg-slate-100 text-slate-600",
+  blue: "bg-slate-100 text-slate-600",
+  green: "bg-slate-100 text-slate-600",
+  red: "bg-slate-100 text-slate-600",
+  amber: "bg-slate-100 text-slate-600",
+  purple: "bg-slate-100 text-slate-600",
+  pink: "bg-slate-100 text-slate-600",
 };
 
 export function CategoryTag({
