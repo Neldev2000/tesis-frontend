@@ -163,6 +163,177 @@ import { useInventoryItems } from '../hooks/useInventoryItems';
 5. **Type Safety**: Use TypeScript strictly, define proper interfaces
 6. **Testing**: Test business logic hooks and shared utilities
 
+## State Management, Data Fetching & Forms
+
+### State Management: Zustand
+
+Use **Zustand** for all client-side state management. Create stores in the module's `stores/` directory or in `shared/stores/` for global state.
+
+```typescript
+// app/modules/inventory/stores/inventoryStore.ts
+import { create } from "zustand";
+
+interface InventoryState {
+  selectedItems: string[];
+  filters: InventoryFilters;
+  setSelectedItems: (items: string[]) => void;
+  setFilters: (filters: InventoryFilters) => void;
+  resetFilters: () => void;
+}
+
+export const useInventoryStore = create<InventoryState>((set) => ({
+  selectedItems: [],
+  filters: defaultFilters,
+  setSelectedItems: (items) => set({ selectedItems: items }),
+  setFilters: (filters) => set({ filters }),
+  resetFilters: () => set({ filters: defaultFilters }),
+}));
+```
+
+### Data Fetching: TanStack Query
+
+Use **TanStack Query** (`@tanstack/react-query`) for all server state management and data fetching. Create query hooks in the module's `hooks/` directory.
+
+```typescript
+// app/modules/patients/hooks/usePatients.ts
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+export function usePatients(tenantId: string) {
+  return useQuery({
+    queryKey: ["patients", tenantId],
+    queryFn: () => fetchPatients(tenantId),
+  });
+}
+
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreatePatientDto) => createPatient(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
+  });
+}
+```
+
+### Forms: React Hook Form + Custom Components
+
+Use **React Hook Form** for all form management combined with our custom input components from `~/shared/components`.
+
+```typescript
+import { useForm, Controller } from "react-hook-form";
+import {
+  Input,
+  NumberInput,
+  CurrencyInput,
+  Select,
+  MultiSelect,
+  Checkbox,
+  RadioGroup,
+  Switch,
+  DateInput,
+  TimeInput,
+} from "~/shared/components";
+
+interface PatientFormData {
+  name: string;
+  age: number;
+  department: string;
+  conditions: string[];
+  isActive: boolean;
+}
+
+export function PatientForm() {
+  const { register, control, handleSubmit, formState: { errors } } = useForm<PatientFormData>();
+
+  const onSubmit = (data: PatientFormData) => {
+    // Handle form submission
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Basic Input - use register directly */}
+      <Input
+        label="Patient Name"
+        {...register("name", { required: "Name is required" })}
+        error={errors.name?.message}
+      />
+
+      {/* Controlled components - use Controller */}
+      <Controller
+        name="age"
+        control={control}
+        rules={{ required: "Age is required", min: 0 }}
+        render={({ field }) => (
+          <NumberInput
+            label="Age"
+            value={field.value}
+            onChange={field.onChange}
+            error={errors.age?.message}
+          />
+        )}
+      />
+
+      <Controller
+        name="department"
+        control={control}
+        rules={{ required: "Department is required" }}
+        render={({ field }) => (
+          <Select
+            label="Department"
+            options={departmentOptions}
+            value={field.value}
+            onChange={field.onChange}
+            error={errors.department?.message}
+          />
+        )}
+      />
+
+      <Controller
+        name="conditions"
+        control={control}
+        render={({ field }) => (
+          <MultiSelect
+            label="Medical Conditions"
+            options={conditionOptions}
+            value={field.value}
+            onChange={field.onChange}
+          />
+        )}
+      />
+
+      <Controller
+        name="isActive"
+        control={control}
+        render={({ field }) => (
+          <Switch
+            label="Active Patient"
+            checked={field.value}
+            onChange={(e) => field.onChange(e.target.checked)}
+          />
+        )}
+      />
+
+      <Button type="submit">Save Patient</Button>
+    </form>
+  );
+}
+```
+
+#### Form Component Summary
+
+| Component | Registration | Notes |
+|-----------|--------------|-------|
+| `Input`, `Textarea`, `EmailInput`, `PasswordInput`, `PhoneInput` | `{...register("field")}` | Native inputs, use register directly |
+| `DateInput`, `TimeInput` | `{...register("field")}` | Native date/time, use register directly |
+| `Checkbox` | `{...register("field")}` | Native checkbox, use register directly |
+| `NumberInput`, `CurrencyInput` | `Controller` | Custom value handling |
+| `Select`, `Combobox`, `Autocomplete` | `Controller` | Custom select components |
+| `MultiSelect` | `Controller` | Returns array of values |
+| `RadioGroup` | `Controller` | Custom radio implementation |
+| `Switch` | `Controller` | Custom toggle implementation |
+
 ## Multi-Tenancy Considerations
 
 - Tenant context is available through the route parameter `:tenantId`
