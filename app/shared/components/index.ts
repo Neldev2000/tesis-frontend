@@ -19,7 +19,7 @@ export { Card, StatCard, MetricCard } from "./Card";
 export { Avatar, AvatarGroup, UserAvatar } from "./Avatar";
 export { Tag, FilterPill, CategoryTag } from "./Tag";
 export { Progress, StockProgress, CircularProgress, MiniRing } from "./Progress";
-export { Table } from "./Table";
+export { Table, EditableTable, DataTable, type EditableColumn, type RowAction, type BulkAction } from "./Table";
 export { EmptyState, NoResultsState, NoDataState, ErrorState } from "./EmptyState";
 
 // Form components - Basic inputs

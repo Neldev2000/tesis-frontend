@@ -17,6 +17,11 @@ import {
   StockProgress,
   CircularProgress,
   Table,
+  EditableTable,
+  DataTable,
+  type EditableColumn,
+  type RowAction,
+  type BulkAction,
   // Basic inputs
   Input,
   SearchInput,
@@ -100,6 +105,7 @@ export default function ComponentsShowcase() {
   const [multiStepOpen, setMultiStepOpen] = useState(false);
   const [stepperDemo, setStepperDemo] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Specialized inputs state
   const [numberValue, setNumberValue] = useState<number | undefined>(42);
@@ -125,6 +131,36 @@ export default function ComponentsShowcase() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [avatarFile, setAvatarFile] = useState<File | undefined>(undefined);
+
+  // EditableTable state
+  interface InvoiceItem {
+    id: string;
+    description: string;
+    quantity: number;
+    unitPrice: number;
+  }
+  const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([
+    { id: "1", description: "Medical consultation", quantity: 1, unitPrice: 150 },
+    { id: "2", description: "Blood test panel", quantity: 2, unitPrice: 45 },
+  ]);
+
+  // DataTable state
+  interface Patient {
+    id: string;
+    name: string;
+    age: number;
+    condition: string;
+    status: "admitted" | "discharged" | "observation";
+    lastVisit: string;
+  }
+  const [patients] = useState<Patient[]>([
+    { id: "PAT-001", name: "Sarah Jenkins", age: 45, condition: "Hypertension", status: "admitted", lastVisit: "2024-01-15" },
+    { id: "PAT-002", name: "Michael Chen", age: 32, condition: "Fracture", status: "discharged", lastVisit: "2024-01-14" },
+    { id: "PAT-003", name: "Emily Davis", age: 28, condition: "Diabetes Type 2", status: "observation", lastVisit: "2024-01-15" },
+    { id: "PAT-004", name: "James Wilson", age: 56, condition: "Cardiac Arrhythmia", status: "admitted", lastVisit: "2024-01-13" },
+  ]);
+  const [selectedPatients, setSelectedPatients] = useState<(string | number)[]>([]);
+  const [patientSort, setPatientSort] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
 
   // Demo options for selects
   const departmentOptions: SelectOption[] = [
@@ -827,63 +863,242 @@ export default function ComponentsShowcase() {
           </SubSection>
         </Section>
 
-        {/* Table */}
-        <Section title="Table">
-          <Card padding="none">
-            <Table>
-              <Table.Header>
-                <Table.Row>
-                  <Table.Head sortable sortDirection="asc">Patient Name</Table.Head>
-                  <Table.Head>ID</Table.Head>
-                  <Table.Head sortable>Condition</Table.Head>
-                  <Table.Head>Status</Table.Head>
-                  <Table.Head>Actions</Table.Head>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell>
-                    <UserAvatar name="Sarah Jenkins" subtitle="MRN: 849201" size="sm" />
-                  </Table.Cell>
-                  <Table.Cell>#PAT-8832</Table.Cell>
-                  <Table.Cell>Hypertension</Table.Cell>
-                  <Table.Cell><StatusBadge status="admitted" /></Table.Cell>
-                  <Table.Cell>
-                    <Button variant="ghost" size="sm">View</Button>
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <UserAvatar name="Michael Chen" subtitle="MRN: 849205" size="sm" />
-                  </Table.Cell>
-                  <Table.Cell>#PAT-8833</Table.Cell>
-                  <Table.Cell>Fracture</Table.Cell>
-                  <Table.Cell><StatusBadge status="discharged" /></Table.Cell>
-                  <Table.Cell>
-                    <Button variant="ghost" size="sm">View</Button>
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>
-                    <UserAvatar name="Emily Davis" subtitle="MRN: 849312" size="sm" />
-                  </Table.Cell>
-                  <Table.Cell>#PAT-8834</Table.Cell>
-                  <Table.Cell>Diabetes Type 2</Table.Cell>
-                  <Table.Cell><StatusBadge status="observation" /></Table.Cell>
-                  <Table.Cell>
-                    <Button variant="ghost" size="sm">View</Button>
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
-            <Table.Pagination
-              currentPage={currentPage}
-              totalPages={5}
-              totalItems={48}
-              itemsPerPage={10}
-              onPageChange={setCurrentPage}
+        {/* Tables */}
+        <Section title="Tables">
+          <SubSection title="Basic Table">
+            <Card padding="none">
+              <Table>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.Head sortable sortDirection="asc">Patient Name</Table.Head>
+                    <Table.Head>ID</Table.Head>
+                    <Table.Head sortable>Condition</Table.Head>
+                    <Table.Head>Status</Table.Head>
+                    <Table.Head>Actions</Table.Head>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  <Table.Row>
+                    <Table.Cell>
+                      <UserAvatar name="Sarah Jenkins" subtitle="MRN: 849201" size="sm" />
+                    </Table.Cell>
+                    <Table.Cell>#PAT-8832</Table.Cell>
+                    <Table.Cell>Hypertension</Table.Cell>
+                    <Table.Cell><StatusBadge status="admitted" /></Table.Cell>
+                    <Table.Cell>
+                      <Button variant="ghost" size="sm">View</Button>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell>
+                      <UserAvatar name="Michael Chen" subtitle="MRN: 849205" size="sm" />
+                    </Table.Cell>
+                    <Table.Cell>#PAT-8833</Table.Cell>
+                    <Table.Cell>Fracture</Table.Cell>
+                    <Table.Cell><StatusBadge status="discharged" /></Table.Cell>
+                    <Table.Cell>
+                      <Button variant="ghost" size="sm">View</Button>
+                    </Table.Cell>
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell>
+                      <UserAvatar name="Emily Davis" subtitle="MRN: 849312" size="sm" />
+                    </Table.Cell>
+                    <Table.Cell>#PAT-8834</Table.Cell>
+                    <Table.Cell>Diabetes Type 2</Table.Cell>
+                    <Table.Cell><StatusBadge status="observation" /></Table.Cell>
+                    <Table.Cell>
+                      <Button variant="ghost" size="sm">View</Button>
+                    </Table.Cell>
+                  </Table.Row>
+                </Table.Body>
+              </Table>
+              <Table.Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(48 / itemsPerPage)}
+                totalItems={48}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+                onItemsPerPageChange={(size) => {
+                  setItemsPerPage(size);
+                  setCurrentPage(1); // Reset to first page when changing page size
+                }}
+                pageSizeOptions={[10, 50, 100]}
+              />
+            </Card>
+          </SubSection>
+
+          <SubSection title="Editable Table (For Forms)">
+            <p className="text-sm text-slate-500 mb-3">
+              Perfect for invoices, inventory items, or any form where users need to add/remove rows dynamically.
+              Uses custom Input, NumberInput, and CurrencyInput components.
+            </p>
+            <EditableTable<InvoiceItem>
+              columns={[
+                {
+                  key: "description",
+                  header: "Description",
+                  width: "40%",
+                  render: (value, _row, _index, onChange) => (
+                    <Input
+                      value={value as string}
+                      onChange={(e) => onChange("description", e.target.value as InvoiceItem["description"])}
+                      placeholder="Item description"
+                      inputSize="sm"
+                    />
+                  ),
+                },
+                {
+                  key: "quantity",
+                  header: "Qty",
+                  width: "15%",
+                  align: "center",
+                  render: (value, _row, _index, onChange) => (
+                    <NumberInput
+                      value={value as number}
+                      onChange={(val) => onChange("quantity", (val ?? 1) as InvoiceItem["quantity"])}
+                      min={1}
+                      inputSize="sm"
+                    />
+                  ),
+                },
+                {
+                  key: "unitPrice",
+                  header: "Unit Price",
+                  width: "20%",
+                  align: "right",
+                  render: (value, _row, _index, onChange) => (
+                    <CurrencyInput
+                      value={value as number}
+                      onChange={(val) => onChange("unitPrice", (val ?? 0) as InvoiceItem["unitPrice"])}
+                      currency="USD"
+                      inputSize="sm"
+                    />
+                  ),
+                },
+                {
+                  key: "id",
+                  header: "Total",
+                  width: "15%",
+                  align: "right",
+                  render: (_value, row) => (
+                    <span className="text-sm font-medium text-slate-700 tabular-nums">
+                      ${(row.quantity * row.unitPrice).toFixed(2)}
+                    </span>
+                  ),
+                },
+              ] as EditableColumn<InvoiceItem>[]}
+              data={invoiceItems}
+              onChange={setInvoiceItems}
+              createRow={() => ({
+                id: Date.now().toString(),
+                description: "",
+                quantity: 1,
+                unitPrice: 0,
+              })}
+              showRowNumbers
+              addLabel="Add item"
+              maxRows={10}
             />
-          </Card>
+            <div className="mt-3 flex justify-end">
+              <div className="text-sm">
+                <span className="text-slate-500">Total: </span>
+                <span className="font-semibold text-slate-900 tabular-nums">
+                  ${invoiceItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </SubSection>
+
+          <SubSection title="Data Table (With Actions)">
+            <p className="text-sm text-slate-500 mb-3">
+              For displaying data with row actions like view, edit, delete. Supports selection and sorting.
+            </p>
+            <Card padding="none">
+              <DataTable<Patient>
+                columns={[
+                  { key: "id", header: "ID", width: "100px", sortable: true },
+                  {
+                    key: "name",
+                    header: "Patient",
+                    sortable: true,
+                    render: (_, row) => (
+                      <UserAvatar name={row.name} subtitle={`Age: ${row.age}`} size="sm" />
+                    ),
+                  },
+                  { key: "condition", header: "Condition", sortable: true },
+                  {
+                    key: "status",
+                    header: "Status",
+                    render: (value) => <StatusBadge status={value as Patient["status"]} />,
+                  },
+                  { key: "lastVisit", header: "Last Visit", align: "right" },
+                ]}
+                data={patients}
+                rowKey="id"
+                selectable
+                selectedKeys={selectedPatients}
+                onSelectionChange={setSelectedPatients}
+                sortConfig={patientSort}
+                onSortChange={(key, direction) => setPatientSort({ key, direction })}
+                bulkActions={[
+                  {
+                    icon: (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                      </svg>
+                    ),
+                    label: "Export",
+                    onClick: (rows) => alert(`Exporting ${rows.length} patient(s): ${rows.map(r => r.name).join(", ")}`),
+                    variant: "primary",
+                  },
+                  {
+                    icon: (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    ),
+                    label: "Delete",
+                    onClick: (rows) => alert(`Deleting ${rows.length} patient(s): ${rows.map(r => r.name).join(", ")}`),
+                    variant: "danger",
+                  },
+                ] as BulkAction<Patient>[]}
+                actions={[
+                  {
+                    icon: (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      </svg>
+                    ),
+                    label: "View",
+                    onClick: (row) => alert(`View patient: ${row.name}`),
+                  },
+                  {
+                    icon: (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                      </svg>
+                    ),
+                    label: "Edit",
+                    onClick: (row) => alert(`Edit patient: ${row.name}`),
+                    hoverOnly: true,
+                  },
+                  {
+                    icon: (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                    ),
+                    label: "Delete",
+                    onClick: (row) => alert(`Delete patient: ${row.name}`),
+                    variant: "danger",
+                    hoverOnly: true,
+                  },
+                ] as RowAction<Patient>[]}
+              />
+            </Card>
+          </SubSection>
         </Section>
 
         {/* Empty States */}
