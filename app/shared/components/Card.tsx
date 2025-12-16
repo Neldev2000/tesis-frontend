@@ -66,7 +66,7 @@ function CardRoot({
         rounded-xl
         ${variantStyles[variant]}
         ${paddingStyles[padding]}
-        ${hover ? "hover:border-slate-300/60 hover:shadow-[0_4px_12px_rgba(15,23,42,0.08),0_8px_24px_rgba(15,23,42,0.06)] transition-all duration-150 cursor-pointer" : ""}
+        ${hover ? "hover:border-slate-300 transition-colors duration-150 cursor-pointer" : ""}
         ${onClick ? "text-left w-full" : ""}
         ${className}
       `}
