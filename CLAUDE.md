@@ -1,6 +1,60 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this healthcare SaaS repository.
+
+## How to Use This Guide
+
+- Start here for project overview and cross-module standards
+- Each skill in `.claude/skills/` contains detailed patterns for specific domains
+- Skills are automatically invoked based on your request context
+
+## Available Skills & Sub-Agents
+
+### Sub-Agents (Agile Development Team)
+
+**Methodology**: Lean UX + Design Thinking + Scrumban for healthcare SaaS development
+
+| Sub-Agent | Role | Methodology | Auto-Invoke Triggers |
+|-----------|------|-------------|---------------------|
+| `product-manager` | Product Manager | Lean UX + Scrumban coordination | analyze requirements, create user stories, plan feature, coordinate team |
+| `product-designer` | UX/UI Designer | Design Thinking + Lean UX | design interface, create wireframes, user experience, medical workflow design |
+| `react-developer` | Frontend Developer | Mock-first + Vercel optimization | implement component, build feature, create form, optimize performance |
+
+### Core Development Skills
+| Skill | Description | Auto-Invoke Triggers |
+|-------|-------------|---------------------|
+| `backend-connector` | API integration, React Query, Zustand, real-time updates with Vercel performance patterns | connect to API, integrate backend, data fetching, state management |
+| `workflow-orchestrator` | End-to-end feature coordination with performance standards | manage workflow, end-to-end feature |
+
+### Vercel Official Skills
+| Skill | Description | Auto-Invoke Triggers |
+|-------|-------------|---------------------|
+| `vercel-react-best-practices` | Official Vercel React performance optimization (45 rules across 8 categories) | optimize performance, review React code, fix waterfalls, bundle optimization |
+
+### Development Workflow (Lean UX + Scrumban)
+
+**Agile Development Flow**: Idea → Requirements → Design → Mock Implementation → API Integration
+
+| Phase | Primary Agent | Action | Supporting Skills |
+|-------|---------------|--------|------------------|
+| **Requirements** | `product-manager` | Analyze vague requests, create user stories | `workflow-orchestrator` |
+| **Design** | `product-designer` | Create wireframes with shared components | `vercel-react-best-practices` |
+| **Mock Implementation** | `react-developer` | Build UI with mock data | `vercel-react-best-practices` |
+| **API Integration** | `react-developer` | Connect real APIs | `backend-connector` + `vercel-react-best-practices` |
+| **Performance** | `react-developer` | Optimize and deploy | `vercel-react-best-practices` |
+
+### Auto-invoke Rules
+
+| User Request Type | Primary Sub-Agent | Supporting Skills |
+|-------------------|-------------------|------------------|
+| "I need a patient dashboard" | `product-manager` | `workflow-orchestrator` |
+| "Design a medical form interface" | `product-designer` | - |
+| "Implement the approved patient card design" | `react-developer` | `vercel-react-best-practices` |
+| "Connect the patient form to the API" | `react-developer` | `backend-connector` |
+| "Optimize this React component performance" | `vercel-react-best-practices` | - |
+| "Review this code for healthcare compliance" | `product-manager` | `vercel-react-best-practices` |
+
+---
 
 ## Project Overview
 
