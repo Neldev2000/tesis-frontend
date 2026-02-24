@@ -2,6 +2,7 @@ import { useState, useCallback, type ReactNode } from "react";
 import { Outlet, useParams, useNavigate } from "react-router";
 import { TenantLayout } from "~/shared/components";
 import type { UserProfile, Hospital } from "~/shared/types";
+import { getAllPermissions } from "~/modules/registry";
 
 // Search category icons
 const searchIcons: Record<string, ReactNode> = {
@@ -43,11 +44,8 @@ const mockHospitals: Hospital[] = [
 ];
 
 // TODO: Replace with actual permissions from auth/RBAC system
-const mockPermissions = [
-  "appointments:read",
-  "patients:read",
-  "inventory:read",
-];
+// For now, grant all registered module permissions
+const mockPermissions = getAllPermissions();
 
 // Mock recent searches
 const mockRecentSearches = [

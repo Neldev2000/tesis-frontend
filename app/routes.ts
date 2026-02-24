@@ -15,5 +15,6 @@ export default [
     route("appointments", "routes/tenant/appointments.tsx"),
     route("inventory", "routes/tenant/inventory.tsx"),
     route("patients", "routes/tenant/patients.tsx"),
+    // Add new module routes above this line
   ]),
 ] satisfies RouteConfig;

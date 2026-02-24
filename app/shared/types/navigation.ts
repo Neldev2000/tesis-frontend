@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { createElement, type ReactNode } from "react";
+import type { ModuleConfig } from "./module-contract";
 
 export interface NavItem {
   id: string;
@@ -30,4 +31,15 @@ export interface NavigationConfig {
   user: UserProfile;
   tenantId: string;
   tenantName?: string;
+}
+
+/** Converts a ModuleConfig to a NavItem for use in the sidebar */
+export function moduleToNavItem(mod: ModuleConfig): NavItem {
+  return {
+    id: mod.id,
+    label: mod.label,
+    href: mod.href,
+    icon: createElement(mod.icon),
+    permission: mod.permission,
+  };
 }
