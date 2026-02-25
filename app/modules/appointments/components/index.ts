@@ -1,2 +1,24 @@
-// Export appointment-specific components here
-// Example: export { AppointmentCalendar } from './AppointmentCalendar';
+export { AppointmentsIcon } from "./AppointmentsIcon";
+export { AppointmentsPage } from "./AppointmentsPage";
+export { AppointmentStatusBadge } from "./AppointmentStatusBadge";
+export { AppointmentTypeBadge } from "./AppointmentTypeBadge";
+export { AppointmentsDashboard } from "./AppointmentsDashboard";
+export { AppointmentsTable } from "./AppointmentsTable";
+export { AppointmentFilters } from "./AppointmentFilters";
+export { AppointmentDetailDialog } from "./AppointmentDetailDialog";
+export { NewAppointmentDialog } from "./NewAppointmentDialog";
+export { PatientSearchStep } from "./PatientSearchStep";
+export { SpecialtyDoctorStep } from "./SpecialtyDoctorStep";
+export { SlotPickerStep } from "./SlotPickerStep";
+export { ConfirmAppointmentStep } from "./ConfirmAppointmentStep";
+export { DoctorAgenda } from "./DoctorAgenda";
+export { DoctorSelector } from "./DoctorSelector";
+export { WeeklyCalendarGrid } from "./WeeklyCalendarGrid";
+export { DayHeader, CalendarDayBody } from "./CalendarDayColumn";
+export { CalendarAppointmentBlock } from "./CalendarAppointmentBlock";
+export { CalendarTimeGutter } from "./CalendarTimeGutter";
+export { ScheduleConfig } from "./ScheduleConfig";
+export { WeeklyScheduleBuilder } from "./WeeklyScheduleBuilder";
+export { DayScheduleRow } from "./DayScheduleRow";
+export { TimeBlockEditor } from "./TimeBlockEditor";
+export { BlockedDatesManager } from "./BlockedDatesManager";

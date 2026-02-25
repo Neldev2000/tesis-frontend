@@ -248,10 +248,10 @@ echo "  ✅ Module files created"
 echo "  📝 Registering in module registry..."
 
 # Insert import line before the sentinel comment
-sed -i '' "s|// Add new module imports above this line|import { moduleConfig as ${CAMEL_NAME} } from \"./${MODULE_NAME}/module.config\";\n// Add new module imports above this line|" "$REGISTRY_FILE"
+perl -i -pe "s|// Add new module imports above this line|import { moduleConfig as ${CAMEL_NAME} } from \"./${MODULE_NAME}/module.config\";\n// Add new module imports above this line|" "$REGISTRY_FILE"
 
 # Insert module into the array before the sentinel comment
-sed -i '' "s|  // Add new modules above this line|  ${CAMEL_NAME},\n  // Add new modules above this line|" "$REGISTRY_FILE"
+perl -i -pe "s|  // Add new modules above this line|  ${CAMEL_NAME},\n  // Add new modules above this line|" "$REGISTRY_FILE"
 
 echo "  ✅ Registered in $REGISTRY_FILE"
 
@@ -262,9 +262,40 @@ echo "  ✅ Registered in $REGISTRY_FILE"
 echo "  📝 Registering route..."
 
 # Insert route line before the sentinel comment
-sed -i '' "s|    // Add new module routes above this line|    route(\"${MODULE_NAME}\", \"routes/tenant/${MODULE_NAME}.tsx\"),\n    // Add new module routes above this line|" "$ROUTES_FILE"
+perl -i -pe "s|    // Add new module routes above this line|    route(\"${MODULE_NAME}\", \"routes/tenant/${MODULE_NAME}.tsx\"),\n    // Add new module routes above this line|" "$ROUTES_FILE"
 
 echo "  ✅ Registered in $ROUTES_FILE"
+
+# ─────────────────────────────────────────────────
+# 4. Git branch (interactive)
+# ─────────────────────────────────────────────────
+
+BRANCH_NAME="feature/$MODULE_NAME"
+BRANCH_CREATED=false
+
+# Only offer branch creation if we're inside a git repo
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+  echo ""
+  read -r -p "  🌿 Create branch '$BRANCH_NAME' from main? (y/n): " REPLY
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    # Ensure we have latest main
+    CURRENT_BRANCH=$(git branch --show-current)
+    if git show-ref --verify --quiet refs/heads/main; then
+      git checkout main --quiet
+      git pull --quiet 2>/dev/null || true
+      git checkout -b "$BRANCH_NAME" --quiet
+      # Stage all module files + registry/routes changes
+      git add "$MODULE_DIR" "app/routes/tenant/$MODULE_NAME.tsx" "$REGISTRY_FILE" "$ROUTES_FILE"
+      git commit -m "scaffold: create $MODULE_NAME module" --quiet
+      BRANCH_CREATED=true
+      echo "  ✅ Branch '$BRANCH_NAME' created with initial commit"
+    else
+      echo "  ⚠️  Branch 'main' not found. Skipping branch creation."
+    fi
+  else
+    echo "  ⏭️  Skipped branch creation"
+  fi
+fi
 
 # ─────────────────────────────────────────────────
 # Done!
@@ -280,6 +311,9 @@ echo "    ✓ Module files created at $MODULE_DIR/"
 echo "    ✓ Registered in $REGISTRY_FILE (sidebar navigation)"
 echo "    ✓ Route added to $ROUTES_FILE"
 echo "    ✓ README.md generated with onboarding guide"
+if [ "$BRANCH_CREATED" = true ]; then
+echo "    ✓ Branch '$BRANCH_NAME' created with initial commit"
+fi
 echo ""
 echo "  What to do next:"
 echo "    1. Pick an icon from https://heroicons.com"

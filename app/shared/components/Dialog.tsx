@@ -24,11 +24,11 @@ function useDialogContext() {
 }
 
 const sizeClasses: Record<DialogSize, string> = {
-  sm: "max-w-sm",
-  md: "max-w-md",
-  lg: "max-w-lg",
-  xl: "max-w-xl",
-  full: "max-w-4xl",
+  sm: "sm:max-w-sm",
+  md: "sm:max-w-md",
+  lg: "sm:max-w-lg",
+  xl: "sm:max-w-xl",
+  full: "sm:max-w-4xl",
 };
 
 interface DialogProps {
@@ -159,7 +159,7 @@ function DialogRoot({
             max-h-[85vh] sm:max-h-[90vh]
             rounded-t-2xl sm:rounded-xl
             animate-in fade-in dialog-panel duration-200
-            sm:${sizeClasses[size]}
+            ${sizeClasses[size]}
             ${className}
           `}
           style={{ position: "relative", zIndex: 1 }}
