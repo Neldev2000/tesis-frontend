@@ -237,7 +237,11 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     // Handle click outside
     useEffect(() => {
       const handleClickOutside = (e: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        const target = e.target as Node;
+        const isInsideContainer = containerRef.current?.contains(target);
+        const isInsideDropdown = listRef.current?.contains(target);
+
+        if (!isInsideContainer && !isInsideDropdown) {
           setIsOpen(false);
           setQuery("");
         }
@@ -330,6 +334,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         style={dropdownStyle}
         className="bg-white rounded-lg border border-slate-200 shadow-lg overflow-auto max-h-60"
         role="listbox"
+        onMouseDown={(e) => e.preventDefault()}
       >
         {loading ? (
           <li className="px-3 py-2 text-sm text-slate-500 flex items-center gap-2">

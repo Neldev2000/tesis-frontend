@@ -441,6 +441,18 @@ export function NewAppointmentPage() {
                           })}
                         </div>
 
+                        {/* Reason */}
+                        <div className="pt-2 border-t border-slate-100">
+                          <Textarea
+                            label="Motivo de la consulta"
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            placeholder="Describa brevemente el motivo..."
+                            rows={2}
+                            textareaSize="sm"
+                          />
+                        </div>
+
                         {/* Agendar button */}
                         <div className="pt-2">
                           <Button
@@ -454,20 +466,6 @@ export function NewAppointmentPage() {
                           </Button>
                         </div>
                       </>
-                    )}
-
-                    {/* Reason — always visible when date selected and slots exist */}
-                    {!blocked && slots.length > 0 && (
-                      <div className="pt-2 border-t border-slate-100">
-                        <Textarea
-                          label="Motivo de la consulta"
-                          value={reason}
-                          onChange={(e) => setReason(e.target.value)}
-                          placeholder="Describa brevemente el motivo..."
-                          rows={2}
-                          textareaSize="sm"
-                        />
-                      </div>
                     )}
                   </div>
                 )}
