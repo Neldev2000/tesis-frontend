@@ -105,7 +105,7 @@ export function AppointmentDetailDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} className="sm:max-w-md">
+    <Dialog open={open} onClose={onClose} size="lg">
       {/* Header: status + time prominently */}
       <Dialog.Header>
         <Dialog.Title>
@@ -129,67 +129,76 @@ export function AppointmentDetailDialog({
 
       <Dialog.Body>
         <div className="space-y-4">
-          {/* ── Patient Card ── */}
-          <div className="p-3 bg-slate-50 rounded-lg">
-            <div className="flex items-center gap-3 mb-3">
-              <Avatar
-                alt={`${patient?.first_name} ${patient?.first_lastname}`}
-                size="md"
-                initials={patient?.initials ?? "?"}
-              />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-900 truncate">
-                  {patient?.first_name}{" "}
-                  {patient?.second_name ? patient.second_name + " " : ""}
-                  {patient?.first_lastname}{" "}
-                  {patient?.second_lastname ?? ""}
-                </p>
-                <Badge variant="default" style="outline" size="xs">
-                  {roleLabels[patient?.role ?? "worker"]}
-                </Badge>
+          {/* ── 2-column layout: Patient | Appointment ── */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Left: Patient Card */}
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <Avatar
+                  alt={`${patient?.first_name} ${patient?.first_lastname}`}
+                  size="md"
+                  initials={patient?.initials ?? "?"}
+                />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-slate-900 truncate">
+                    {patient?.first_name}{" "}
+                    {patient?.second_name ? patient.second_name + " " : ""}
+                    {patient?.first_lastname}{" "}
+                    {patient?.second_lastname ?? ""}
+                  </p>
+                  <Badge variant="default" style="outline" size="xs">
+                    {roleLabels[patient?.role ?? "worker"]}
+                  </Badge>
+                </div>
+              </div>
+              <div className="divide-y divide-slate-200/60">
+                <InfoRow label="Cédula" value={patient?.ci} />
+                <InfoRow
+                  label="NHM"
+                  value={
+                    <span className="font-mono tracking-wider text-viking-700">
+                      {patient?.nhm}
+                    </span>
+                  }
+                />
+                <InfoRow label="Email" value={patient?.email} />
+                <InfoRow label="Teléfono" value={patient?.cellphone} />
               </div>
             </div>
-            <div className="divide-y divide-slate-200/60">
-              <InfoRow label="Cédula" value={patient?.ci} />
-              <InfoRow
-                label="NHM"
-                value={
-                  <span className="font-mono tracking-wider text-viking-700">
-                    {patient?.nhm}
-                  </span>
-                }
-              />
-              <InfoRow label="Email" value={patient?.email} />
-              <InfoRow label="Teléfono" value={patient?.cellphone} />
-            </div>
-          </div>
 
-          {/* ── Appointment Info ── */}
-          <div className="divide-y divide-slate-100">
-            <InfoRow label="Especialidad" value={specialty?.name} />
-            <InfoRow
-              label="Doctor"
-              value={
-                <span>
-                  {doctor?.full_name}{" "}
-                  <span className="text-xs text-slate-400">
-                    ({doctor?.doctor_code})
-                  </span>
-                </span>
-              }
-            />
-            <InfoRow
-              label="Tipo"
-              value={
-                <AppointmentTypeBadge type={appointment.appointment_type} />
-              }
-            />
-            {appointment.reason && (
-              <div className="py-1.5">
-                <p className="text-xs text-slate-500 mb-0.5">Motivo</p>
-                <p className="text-sm text-slate-700">{appointment.reason}</p>
+            {/* Right: Appointment Info */}
+            <div className="p-3 bg-slate-50 rounded-lg">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                Detalles de la Cita
+              </p>
+              <div className="divide-y divide-slate-200/60">
+                <InfoRow label="Especialidad" value={specialty?.name} />
+                <InfoRow
+                  label="Doctor"
+                  value={
+                    <span>
+                      {doctor?.full_name}{" "}
+                      <span className="text-xs text-slate-400">
+                        ({doctor?.doctor_code})
+                      </span>
+                    </span>
+                  }
+                />
+                <InfoRow
+                  label="Tipo"
+                  value={
+                    <AppointmentTypeBadge type={appointment.appointment_type} />
+                  }
+                />
+                <InfoRow label="Duración" value={`${duration} min`} />
               </div>
-            )}
+              {appointment.reason && (
+                <div className="mt-2 pt-2 border-t border-slate-200/60">
+                  <p className="text-xs text-slate-500 mb-0.5">Motivo</p>
+                  <p className="text-sm text-slate-700">{appointment.reason}</p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ── Cancellation reason ── */}
@@ -204,12 +213,12 @@ export function AppointmentDetailDialog({
             </div>
           )}
 
-          {/* ── Progress: vertical timeline ── */}
+          {/* ── Progress: horizontal steps ── */}
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
               Progreso
             </p>
-            <div className="flex flex-col gap-0">
+            <div className="flex items-center gap-1">
               {statusFlow.map((s, i) => {
                 const state = getStepState(appointment.status, i);
                 const label =
@@ -219,9 +228,9 @@ export function AppointmentDetailDialog({
                 const isLast = i === statusFlow.length - 1;
 
                 return (
-                  <div key={s} className="flex gap-3">
-                    {/* Dot + line */}
-                    <div className="flex flex-col items-center">
+                  <div key={s} className="flex items-center gap-1 flex-1 min-w-0">
+                    {/* Step pill */}
+                    <div className="flex items-center gap-1.5 min-w-0">
                       <div
                         className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
                           state === "done"
@@ -245,28 +254,28 @@ export function AppointmentDetailDialog({
                           <div className="w-2 h-2 rounded-full bg-white" />
                         ) : null}
                       </div>
-                      {!isLast && (
-                        <div
-                          className={`w-0.5 h-4 ${
-                            state === "done" ? "bg-viking-300" : "bg-slate-200"
-                          }`}
-                        />
-                      )}
+                      <span
+                        className={`text-[11px] truncate ${
+                          state === "done"
+                            ? "text-slate-500"
+                            : state === "current"
+                              ? "text-viking-700 font-semibold"
+                              : state === "terminal"
+                                ? "text-red-600 font-semibold"
+                                : "text-slate-400"
+                        }`}
+                      >
+                        {label}
+                      </span>
                     </div>
-                    {/* Label */}
-                    <p
-                      className={`text-sm pt-0.5 ${
-                        state === "done"
-                          ? "text-slate-500"
-                          : state === "current"
-                            ? "text-viking-700 font-semibold"
-                            : state === "terminal"
-                              ? "text-red-600 font-semibold"
-                              : "text-slate-400"
-                      }`}
-                    >
-                      {label}
-                    </p>
+                    {/* Connector line */}
+                    {!isLast && (
+                      <div
+                        className={`h-0.5 flex-1 rounded-full ${
+                          state === "done" ? "bg-viking-300" : "bg-slate-200"
+                        }`}
+                      />
+                    )}
                   </div>
                 );
               })}

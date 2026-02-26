@@ -50,58 +50,27 @@ export function ConfirmAppointmentStep({
     <div className="space-y-4">
       {/* Summary Card */}
       <Card variant="flat" padding="md">
-        <div className="space-y-4">
-          {/* Patient */}
-          <div className="flex items-center gap-3">
-            <Avatar
-              alt={`${patient.first_name} ${patient.first_lastname}`}
-              size="sm"
-              initials={patient.initials}
-            />
-            <div>
-              <p className="text-sm font-medium text-slate-900">
-                {patient.first_name} {patient.first_lastname}
-              </p>
-              <p className="text-xs text-slate-500">
-                CI: {patient.ci} &middot; NHM: {patient.nhm}
-              </p>
+        <div className="space-y-3">
+          {/* Patient + Type row */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar
+                alt={`${patient.first_name} ${patient.first_lastname}`}
+                size="sm"
+                initials={patient.initials}
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-slate-900 truncate">
+                  {patient.first_name} {patient.first_lastname}
+                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-slate-500">{patient.ci}</span>
+                  <span className="text-xs text-viking-600 font-mono font-medium">
+                    {patient.nhm}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="border-t border-slate-100" />
-
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <p className="text-xs text-slate-500">Especialidad</p>
-              <p className="text-sm font-medium text-slate-900">
-                {specialty.name}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Doctor</p>
-              <p className="text-sm font-medium text-slate-900">
-                {doctor.full_name}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Fecha</p>
-              <p className="text-sm font-medium text-slate-900">
-                {formatDate(date)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-500">Hora</p>
-              <p className="text-sm font-medium text-slate-900 tabular-nums">
-                {time} - {endTime}
-              </p>
-            </div>
-          </div>
-
-          <div className="border-t border-slate-100" />
-
-          {/* Type & Duration */}
-          <div className="flex items-center gap-3">
             <Badge
               variant={appointmentType === "first_visit" ? "primary" : "default"}
               style={appointmentType === "first_visit" ? "ghost" : "outline"}
@@ -109,9 +78,39 @@ export function ConfirmAppointmentStep({
             >
               {appointmentType === "first_visit" ? "Primera Vez" : "Control"}
             </Badge>
-            <span className="text-xs text-slate-500">
-              Duración: {durationMinutes} min
-            </span>
+          </div>
+
+          <div className="border-t border-slate-100" />
+
+          {/* Details — 2×2 grid */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+            <div>
+              <p className="text-[11px] text-slate-400 mb-0.5">Especialidad</p>
+              <p className="text-sm font-medium text-slate-900">
+                {specialty.name}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-slate-400 mb-0.5">Doctor</p>
+              <p className="text-sm font-medium text-slate-900">
+                {doctor.full_name}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-slate-400 mb-0.5">Fecha</p>
+              <p className="text-sm font-medium text-slate-900 capitalize">
+                {formatDate(date)}
+              </p>
+            </div>
+            <div>
+              <p className="text-[11px] text-slate-400 mb-0.5">Horario</p>
+              <p className="text-sm font-medium text-slate-900 tabular-nums">
+                {time} – {endTime}
+                <span className="text-xs text-slate-400 ml-1.5">
+                  ({durationMinutes} min)
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </Card>

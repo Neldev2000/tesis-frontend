@@ -36,9 +36,9 @@ interface BaseSelectProps {
 }
 
 const sizeStyles: Record<SelectSize, string> = {
-  sm: "h-8 px-2.5 text-sm",
-  md: "h-9 px-3 text-sm",
-  lg: "h-10 px-3.5 text-sm",
+  sm: "h-9 px-2.5 text-sm",
+  md: "h-10 px-3 text-sm",
+  lg: "h-11 px-3.5 text-sm",
 };
 
 const baseSelectClasses = `
@@ -672,7 +672,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(
         <div
           onClick={() => !disabled && inputRef.current?.focus()}
           className={`
-            min-h-9 rounded-lg border bg-white px-2 py-1.5
+            min-h-10 rounded-lg border bg-white px-2 py-1.5
             flex flex-wrap items-center gap-1.5
             transition-all duration-150
             ${getStateClasses(error, isOpen)}

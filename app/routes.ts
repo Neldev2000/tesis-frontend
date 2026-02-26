@@ -12,6 +12,7 @@ export default [
   // Tenant-specific routes with layout
   route(":tenantId", "routes/tenant/layout.tsx", [
     index("routes/tenant/dashboard.tsx"),
+    route("appointments/new", "routes/tenant/appointments-new.tsx"),
     route("appointments", "routes/tenant/appointments.tsx"),
     route("inventory", "routes/tenant/inventory.tsx"),
     route("patients", "routes/tenant/patients.tsx"),

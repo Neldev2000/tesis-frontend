@@ -7,6 +7,7 @@ export { AppointmentsTable } from "./AppointmentsTable";
 export { AppointmentFilters } from "./AppointmentFilters";
 export { AppointmentDetailDialog } from "./AppointmentDetailDialog";
 export { NewAppointmentDialog } from "./NewAppointmentDialog";
+export { NewAppointmentPage } from "./NewAppointmentPage";
 export { PatientSearchStep } from "./PatientSearchStep";
 export { SpecialtyDoctorStep } from "./SpecialtyDoctorStep";
 export { SlotPickerStep } from "./SlotPickerStep";

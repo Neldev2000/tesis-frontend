@@ -126,6 +126,19 @@ export function getBlocksForDoctor(doctorId: string): DoctorBlock[] {
   return mockBlocks.filter((b) => b.doctor_id === doctorId);
 }
 
+/** Check if a doctor has any schedule on a given date (not blocked, has working hours) */
+export function isDoctorAvailableOnDate(doctorId: string, date: string): boolean {
+  const blocks = getBlocksForDoctor(doctorId);
+  const isBlocked = blocks.some((b) => date >= b.start_date && date <= b.end_date);
+  if (isBlocked) return false;
+
+  const dayOfWeek = getDayOfWeek(date);
+  const schedules = getSchedulesForDoctor(doctorId).filter(
+    (s) => s.day_of_week === dayOfWeek
+  );
+  return schedules.length > 0;
+}
+
 export function useAvailableSlots(
   doctorId: string | null,
   date: string | null,

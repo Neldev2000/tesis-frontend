@@ -40,7 +40,7 @@ export function PatientSearchStep({
         onClear={() => setSearch("")}
         placeholder="Buscar por nombre, CI o NHM..."
       />
-      <div className="space-y-1.5 max-h-64 overflow-y-auto custom-scrollbar-subtle">
+      <div className="space-y-1 max-h-72 overflow-y-auto custom-scrollbar-subtle">
         {filtered.map((patient) => {
           const isSelected = selectedPatient?.id === patient.id;
           return (
@@ -59,14 +59,13 @@ export function PatientSearchStep({
                 initials={patient.initials}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 truncate">
+                <p className="text-sm font-medium text-slate-900">
                   {patient.first_name} {patient.first_lastname}
                 </p>
-                <div className="flex items-center gap-2 mt-0.5">
+                <div className="flex items-center gap-3 mt-0.5">
                   <span className="text-xs text-slate-500">{patient.ci}</span>
-                  <span className="text-xs text-slate-400">&middot;</span>
-                  <span className="text-xs text-slate-500">
-                    NHM: {patient.nhm}
+                  <span className="text-xs text-viking-600 font-mono font-medium">
+                    {patient.nhm}
                   </span>
                 </div>
               </div>

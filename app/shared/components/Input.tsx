@@ -27,9 +27,9 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size">
 }
 
 const sizeStyles: Record<InputSize, string> = {
-  sm: "h-8 px-2.5 text-sm",
-  md: "h-9 px-3 text-sm",
-  lg: "h-10 px-3.5 text-sm",
+  sm: "h-9 px-2.5 text-sm",
+  md: "h-10 px-3 text-sm",
+  lg: "h-11 px-3.5 text-sm",
 };
 
 const iconPadding: Record<InputSize, { left: string; right: string }> = {

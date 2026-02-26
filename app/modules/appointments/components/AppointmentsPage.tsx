@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { Button } from "~/shared/components";
 import { useAppointmentsStore } from "../stores";
 import { AppointmentsDashboard } from "./AppointmentsDashboard";
 import { AppointmentDetailDialog } from "./AppointmentDetailDialog";
-import { NewAppointmentDialog } from "./NewAppointmentDialog";
 import { DoctorAgenda } from "./DoctorAgenda";
 import { ScheduleConfig } from "./ScheduleConfig";
 import type { Appointment, AppointmentTab } from "../types";
@@ -18,7 +18,6 @@ export function AppointmentsPage() {
   const { activeTab, setActiveTab } = useAppointmentsStore();
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
-  const [newAppointmentOpen, setNewAppointmentOpen] = useState(false);
 
   return (
     <div className="space-y-4">
@@ -30,27 +29,28 @@ export function AppointmentsPage() {
             Gestión de citas y agendas médicas
           </p>
         </div>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => setNewAppointmentOpen(true)}
-          icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-          }
-        >
-          Nueva Cita
-        </Button>
+        <Link to="new">
+          <Button
+            variant="primary"
+            size="sm"
+            icon={
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+            }
+          >
+            Nueva Cita
+          </Button>
+        </Link>
       </div>
 
       {/* Tab Bar */}
@@ -87,12 +87,6 @@ export function AppointmentsPage() {
         open={selectedAppointment !== null}
         onClose={() => setSelectedAppointment(null)}
         onStatusChange={() => setSelectedAppointment(null)}
-      />
-
-      {/* New Appointment Dialog */}
-      <NewAppointmentDialog
-        open={newAppointmentOpen}
-        onClose={() => setNewAppointmentOpen(false)}
       />
     </div>
   );

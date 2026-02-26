@@ -76,7 +76,8 @@ export function NewAppointmentDialog({
       onClose={handleClose}
       steps={steps}
       stepperVariant="compact"
-      size="md"
+      size="xl"
+      className="sm:max-w-2xl"
       onComplete={handleComplete}
     >
       {/* Step 1: Patient Search */}
